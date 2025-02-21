@@ -5,6 +5,7 @@ import { collection, query, orderBy, limit, onSnapshot } from "firebase/firestor
 import { db } from "@/lib/firebase"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
 
 interface Match {
   id: string
@@ -15,9 +16,11 @@ interface Match {
 
 export function MatchList() {
   const [matches, setMatches] = useState<Match[]>([])
+  const [currentPage, setCurrentPage] = useState(1)
+  const matchesPerPage = 15
 
   useEffect(() => {
-    const q = query(collection(db, "matches"), orderBy("date", "desc"), limit(10))
+    const q = query(collection(db, "matches"), orderBy("date", "desc"))
     const unsubscribe = onSnapshot(q, (querySnapshot) => {
       const matchesData: Match[] = []
       querySnapshot.forEach((doc) => {
@@ -29,12 +32,50 @@ export function MatchList() {
     return () => unsubscribe()
   }, [])
 
+  // Sayfalama için gerekli hesaplamalar
+  const indexOfLastMatch = currentPage * matchesPerPage
+  const indexOfFirstMatch = indexOfLastMatch - matchesPerPage
+  const currentMatches = matches.slice(indexOfFirstMatch, indexOfLastMatch)
+
+  const totalPages = Math.ceil(matches.length / matchesPerPage)
+
+  const handleNextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1)
+    }
+  }
+
+  const scrollToTableBottom = () => {
+    const cardContent = document.querySelector('.card-content')
+    if (cardContent) {
+      cardContent.scrollIntoView({ 
+        behavior: 'smooth', 
+        block: 'end',
+        inline: 'nearest' 
+      })
+    }
+  }
+
+  const handlePreviousPage = () => {
+    if (currentPage > 1) {
+      const isLastPage = currentPage === totalPages
+      const matchesInLastPage = matches.length % matchesPerPage
+      const hasFewerMatches = isLastPage && matchesInLastPage > 0 && matchesInLastPage < matchesPerPage
+
+      setCurrentPage(currentPage - 1)
+
+      if (hasFewerMatches) {
+        setTimeout(scrollToTableBottom, 100)
+      }
+    }
+  }
+
   return (
     <Card>
       <CardHeader>
         <CardTitle>Son Maçlar</CardTitle>
       </CardHeader>
-      <CardContent>
+      <CardContent className="card-content">
         <Table>
           <TableHeader>
             <TableRow>
@@ -44,7 +85,7 @@ export function MatchList() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {matches.map((match) => (
+            {currentMatches.map((match) => (
               <TableRow key={match.id}>
                 <TableCell>
                   {new Date(match.date).toLocaleString('tr-TR', {
@@ -113,8 +154,26 @@ export function MatchList() {
             ))}
           </TableBody>
         </Table>
+        <div className="flex justify-center items-center mt-4">
+          <Button 
+            onClick={handlePreviousPage} 
+            disabled={currentPage === 1}
+            className="mr-2 text-xl"
+          >
+            ←
+          </Button>
+          <span className="mx-4">
+            Sayfa {currentPage} / {totalPages}
+          </span>
+          <Button 
+            onClick={handleNextPage} 
+            disabled={currentPage === totalPages}
+            className="ml-2 text-xl"
+          >
+            →
+          </Button>
+        </div>
       </CardContent>
     </Card>
   )
 }
-
