@@ -39,7 +39,7 @@ export function MatchList() {
           <TableHeader>
             <TableRow>
               <TableHead>Tarih</TableHead>
-              <TableHead>Kazanan</TableHead>
+              <TableHead>Kazanan Rol</TableHead>
               <TableHead>Oyuncular</TableHead>
             </TableRow>
           </TableHeader>
