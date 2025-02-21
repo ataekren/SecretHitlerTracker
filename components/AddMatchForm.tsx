@@ -3,7 +3,7 @@
 import type React from "react"
 
 import { useState, useEffect } from "react"
-import { addDoc, collection, getDocs, updateDoc, doc, increment } from "firebase/firestore"
+import { addDoc, collection, getDocs, updateDoc, doc, increment, query, orderBy, limit } from "firebase/firestore"
 import { db } from "@/lib/firebase"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
@@ -120,6 +120,34 @@ export function AddMatchForm() {
     }
   }
 
+  const selectPlayersFromLastMatch = async () => {
+    try {
+      const q = query(collection(db, "matches"), orderBy("date", "desc"), limit(1))
+      const querySnapshot = await getDocs(q)
+      
+      if (!querySnapshot.empty) {
+        const lastMatch = querySnapshot.docs[0].data()
+        const lastMatchPlayers = lastMatch.players.map((p: any) => ({
+          id: p.id,
+          role: "Liberal"
+        }))
+        setSelectedPlayers(lastMatchPlayers)
+      } else {
+        toast({
+          title: "Bilgi",
+          description: "Henüz hiç maç eklenmemiş.",
+        })
+      }
+    } catch (error) {
+      console.error("Son maç bilgileri alınırken hata oluştu:", error)
+      toast({
+        title: "Hata",
+        description: "Son maç bilgileri alınırken bir hata oluştu.",
+        variant: "destructive",
+      })
+    }
+  }
+
   return (
     <Card>
       <CardHeader>
@@ -128,7 +156,17 @@ export function AddMatchForm() {
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block mb-2">Oyuncular ve Rolleri</label>
+            <div className="flex items-center gap-5 mb-2">
+              <label>Oyuncular ve Rolleri</label>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={selectPlayersFromLastMatch}
+              >
+                Son Maçtakileri Seç
+              </Button>
+            </div>
             <div className="space-y-2">
               {players.map((player) => (
                 <div key={player.id} className="flex items-center">
@@ -235,4 +273,3 @@ export function AddMatchForm() {
     </Card>
   )
 }
-
