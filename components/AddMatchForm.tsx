@@ -156,7 +156,7 @@ export function AddMatchForm() {
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <div className="flex items-center gap-5 mb-2">
+            <div className="flex items-center gap-5 mb-3">
               <label>Oyuncular ve Rolleri</label>
               <Button
                 type="button"
