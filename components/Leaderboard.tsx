@@ -24,7 +24,7 @@ export function Leaderboard() {
   const [players, setPlayers] = useState<Player[]>([])
 
   useEffect(() => {
-    const q = query(collection(db, "players"), orderBy("wins", "desc"), limit(10))
+    const q = query(collection(db, "players"), orderBy("elo", "desc"), limit(10))
     const unsubscribe = onSnapshot(q, (querySnapshot) => {
       const playersData: Player[] = []
       querySnapshot.forEach((doc) => {
