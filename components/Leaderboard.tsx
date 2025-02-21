@@ -49,6 +49,7 @@ export function Leaderboard() {
               <TableHead>İsim</TableHead>
               <TableHead>Toplam Oyun</TableHead>
               <TableHead>Kazanılan Oyun</TableHead>
+              <TableHead>Kaybedilen Oyun</TableHead>
               <TableHead>Kazanma Oranı</TableHead>
               <TableHead>ELO</TableHead>
             </TableRow>
@@ -60,6 +61,7 @@ export function Leaderboard() {
                 <TableCell>{player.name}</TableCell>
                 <TableCell>{player.totalGames}</TableCell>
                 <TableCell>{player.wins}</TableCell>
+                <TableCell>{player.totalGames - player.wins}</TableCell>
                 <TableCell>
                   {player.totalGames > 0 
                     ? `${((player.wins / player.totalGames) * 100).toFixed(1)}%` 
