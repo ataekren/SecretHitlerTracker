@@ -49,7 +49,7 @@ export function MatchList() {
     const cardContent = document.querySelector('.card-content')
     if (cardContent) {
       cardContent.scrollIntoView({ 
-        behavior: 'smooth', 
+        behavior: 'auto', 
         block: 'end',
         inline: 'nearest' 
       })
@@ -65,7 +65,7 @@ export function MatchList() {
       setCurrentPage(currentPage - 1)
 
       if (hasFewerMatches) {
-        setTimeout(scrollToTableBottom, 100)
+        setTimeout(scrollToTableBottom, 10)
       }
     }
   }
