@@ -37,21 +37,18 @@ export function RoleStats() {
     return players
       .filter(player => player.liberalGames > 0)
       .sort((a, b) => (b.liberalWins / b.liberalGames) - (a.liberalWins / a.liberalGames))
-      .slice(0, 5)
   }
 
   const getFascistPlayers = () => {
     return players
       .filter(player => player.fascistGames > 0)
       .sort((a, b) => (b.fascistWins / b.fascistGames) - (a.fascistWins / a.fascistGames))
-      .slice(0, 5)
   }
 
   const getHitlerPlayers = () => {
     return players
       .filter(player => player.hitlerGames > 0)
       .sort((a, b) => (b.hitlerWins / b.hitlerGames) - (a.hitlerWins / a.hitlerGames))
-      .slice(0, 5)
   }
 
   return (
