@@ -3,6 +3,7 @@ import { MatchList } from "@/components/MatchList"
 import { Leaderboard } from "@/components/Leaderboard"
 import { RoleStats } from "@/components/RoleStats"
 import Image from "next/image"
+import { PlayerMatchHistory } from "@/components/PlayerMatchHistory"
 
 export default function Home() {
   return (
@@ -21,6 +22,7 @@ export default function Home() {
         <Leaderboard />
         <RoleStats />
         <MatchList />
+        <PlayerMatchHistory />
       </main>
     </div>
   )
