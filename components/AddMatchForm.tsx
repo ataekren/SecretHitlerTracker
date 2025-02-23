@@ -157,7 +157,10 @@ export function AddMatchForm() {
 
     try {
       const playerRef = doc(db, "players", penaltyPlayer)
-      await updateDoc(playerRef, { elo: increment(-5) })
+      await updateDoc(playerRef, { 
+        elo: increment(-5),
+        penaltyCount: increment(1)
+       })
 
       toast({
         title: "Ceza Verildi",
@@ -166,6 +169,8 @@ export function AddMatchForm() {
     } catch (error) {
       console.error("Ceza verme hatası:", error)
       toast({ title: "Hata", description: "Ceza uygulanırken bir hata oluştu.", variant: "destructive" })
+    } finally {
+      setPenaltyPlayer(null)
     }
   }
 
