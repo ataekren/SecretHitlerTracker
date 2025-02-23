@@ -55,8 +55,11 @@ export function RoleStats() {
     <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-8">
       {/* Liberal Stats */}
       <Card>
-        <CardHeader>
-          <CardTitle className="text-blue-500">Liberal İstatistikleri</CardTitle>
+        <CardHeader className="pb-0">
+          <div className="flex items-center justify-between">
+            <CardTitle className="text-blue-500">Liberal İstatistikleri</CardTitle>
+            <img src="/liberal.png" alt="Liberal Logo" className="w-8 h-8" />
+          </div>
         </CardHeader>
         <CardContent>
           <Table>
@@ -86,8 +89,11 @@ export function RoleStats() {
 
       {/* Fascist Stats */}
       <Card>
-        <CardHeader>
-          <CardTitle className="text-red-500">Faşist İstatistikleri</CardTitle>
+        <CardHeader className="pb-0">
+          <div className="flex items-center justify-between">
+            <CardTitle className="text-red-500">Faşist İstatistikleri</CardTitle>
+            <img src="/fasist.png" alt="Fascist Logo" className="w-8 h-8" />
+          </div>
         </CardHeader>
         <CardContent>
           <Table>
@@ -117,8 +123,11 @@ export function RoleStats() {
 
       {/* Hitler Stats */}
       <Card>
-        <CardHeader>
-          <CardTitle className="text-red-700">Hitler İstatistikleri</CardTitle>
+        <CardHeader className="pb-0">
+          <div className="flex items-center justify-between">
+            <CardTitle className="text-red-700">Hitler İstatistikleri</CardTitle>
+            <img src="/hitler.png" alt="Hitler Logo" className="w-8 h-8" />
+          </div>
         </CardHeader>
         <CardContent>
           <Table>
@@ -147,4 +156,4 @@ export function RoleStats() {
       </Card>
     </div>
   )
-} 
+}

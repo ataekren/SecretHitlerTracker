@@ -19,6 +19,7 @@ export function AddMatchForm() {
   const [players, setPlayers] = useState<Player[]>([])
   const [selectedPlayers, setSelectedPlayers] = useState<{id: string, role: string}[]>([])
   const [winner, setWinner] = useState("")
+  const [penaltyPlayer, setPenaltyPlayer] = useState<string | null>(null)
 
   useEffect(() => {
     const fetchPlayers = async () => {
@@ -148,6 +149,26 @@ export function AddMatchForm() {
     }
   }
 
+  const handlePenalty = async () => {
+    if (!penaltyPlayer) {
+      toast({ title: "Hata", description: "Lütfen bir oyuncu seçin.", variant: "destructive" })
+      return
+    }
+
+    try {
+      const playerRef = doc(db, "players", penaltyPlayer)
+      await updateDoc(playerRef, { elo: increment(-5) })
+
+      toast({
+        title: "Ceza Verildi",
+        description: "Oyuncunun ELO'su 5 azaltıldı.",
+      })
+    } catch (error) {
+      console.error("Ceza verme hatası:", error)
+      toast({ title: "Hata", description: "Ceza uygulanırken bir hata oluştu.", variant: "destructive" })
+    }
+  }
+
   return (
     <Card>
       <CardHeader>
@@ -270,6 +291,31 @@ export function AddMatchForm() {
           </Button>
         </form>
       </CardContent>
+      <CardFooter>
+        <div className="border-t pt-4 w-full">
+          <h3 className="text-sg font-semibold mb-2">Oyuncuya Ceza Ver</h3>
+          <div className="flex gap-2 items-center">
+            <select
+              value={penaltyPlayer || ""}
+              onChange={(e) => setPenaltyPlayer(e.target.value)}
+              className="border p-2 rounded w-full text-sm"
+            >
+              <option value="">Oyuncu Seç</option>
+              {players.map((player) => (
+                <option key={player.id} value={player.id}>
+                  {player.name}
+                </option>
+              ))}
+            </select>
+            <Button 
+            size="sm"
+            onClick={handlePenalty} 
+            disabled={!penaltyPlayer}
+          >Ceza Ver</Button>
+          </div>
+        </div>
+      </CardFooter>
+
     </Card>
   )
 }

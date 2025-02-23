@@ -23,7 +23,6 @@ export function Navbar() {
             height={13}
             priority
           />
-          <span className="text-lg font-medium">Keep in Mind</span>
         </Link>
         <div>
           {user ? (
