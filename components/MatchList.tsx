@@ -32,7 +32,6 @@ export function MatchList() {
     return () => unsubscribe()
   }, [])
 
-  // Sayfalama için gerekli hesaplamalar
   const indexOfLastMatch = currentPage * matchesPerPage
   const indexOfFirstMatch = indexOfLastMatch - matchesPerPage
   const currentMatches = matches.slice(indexOfFirstMatch, indexOfLastMatch)
@@ -112,14 +111,14 @@ export function MatchList() {
                     }
                     return (
                       <span
-                        className={`inline-block ${bgColor} rounded-full px-2 py-1 text-xs font-semibold`}
+                        className={`inline-block ${bgColor} rounded-full px-3 py-1 text-s font-semibold`}
                       >
                         {match.winner}
                       </span>
                     )
                   })()}
                 </TableCell>
-                <TableCell>
+                <TableCell className="align-middle">
                   {match.players.map((player) => {
                     let bgColor = ""
                     
@@ -146,7 +145,7 @@ export function MatchList() {
                     return (
                       <span
                         key={player.name}
-                        className={`inline-block ${bgColor} text-white rounded-full px-2 py-1 text-xs font-semibold mr-2 mb-2 ${winnerStyle}`}
+                        className={`inline-block ${bgColor} text-white rounded-full px-3 py-1 text-s font-semibold mr-2 mb-1 mt-1 ${winnerStyle}`}
                       >
                         {player.name} ({player.role})
                       </span>
