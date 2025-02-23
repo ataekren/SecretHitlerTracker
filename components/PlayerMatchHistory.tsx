@@ -57,7 +57,7 @@ export function PlayerMatchHistory() {
       match.players.some((player) => player.id === playerId)
     )
 
-    return playerMatches.slice(0, 15).map((match) => {
+    return playerMatches.map((match) => {
       const player = match.players.find((p) => p.id === playerId)
       const isWinner =
         (match.winner === "Liberal" && player?.role === "Liberal") ||
@@ -88,15 +88,14 @@ export function PlayerMatchHistory() {
                 <TableCell>{player.name}</TableCell>
                 <TableCell className="text-center align-middle">
                   <div className="flex items-center flex-wrap">
-                    {getPlayerMatchHistory(player.id).map((isWinner, index) => {
+                    {getPlayerMatchHistory(player.id).slice(0,24).map((isWinner, index) => {
                       const bgColor = isWinner ? "bg-green-600" : "bg-red-500"
 
                       return (
                         <span
                           key={index}
-                          className={`inline-block ${bgColor} text-white rounded-full px-3 py-1 text-s font-semibold tracking-wider mr-2 mt-1 mb-1`}
-                        >
-                          {isWinner ? "Win" : "Lose"}
+                          className={`w-10 h-8 flex items-center justify-center ${bgColor} text-white rounded-full text-sm font-semibold tracking-wider mr-2 mt-1 mb-1`}>
+                          {isWinner ? "W" : "L"}
                         </span>
                       )
                     })}
