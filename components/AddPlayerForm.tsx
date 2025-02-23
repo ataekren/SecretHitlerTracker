@@ -22,6 +22,7 @@ interface Player {
   fascistWins: number
   hitlerGames: number
   hitlerWins: number
+  penaltyCount: number
 }
 
 export function AddPlayerForm() {
@@ -58,6 +59,7 @@ export function AddPlayerForm() {
           fascistWins: 0,
           hitlerGames: 0,
           hitlerWins: 0,
+          penaltyCount: 0,
         })
         setName("")
         toast({
@@ -99,16 +101,16 @@ export function AddPlayerForm() {
             <TableHeader>
               <TableRow>
                 <TableHead>İsim</TableHead>
-                <TableHead>Kazanma</TableHead>
                 <TableHead>Toplam Oyun</TableHead>
+                <TableHead>Kazanma</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {players.map((player) => (
                 <TableRow key={player.id}>
                   <TableCell>{player.name}</TableCell>
-                  <TableCell>{player.wins}</TableCell>
                   <TableCell>{player.totalGames}</TableCell>
+                  <TableCell>{player.wins}</TableCell>
                 </TableRow>
               ))}
             </TableBody>

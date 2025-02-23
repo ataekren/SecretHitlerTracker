@@ -21,6 +21,7 @@ interface Player {
   fascistWins: number
   hitlerGames: number
   hitlerWins: number
+  penaltyCount: number
 }
 
 const germaniaOne = Germania_One({
@@ -64,6 +65,7 @@ export function Leaderboard() {
               <TableHead>Kazanılan Oyun</TableHead>
               <TableHead>Kaybedilen Oyun</TableHead>
               <TableHead>Kazanma Oranı</TableHead>
+              <TableHead>Ceza Sayısı</TableHead>
               <TableHead>ELO</TableHead>
             </TableRow>
           </TableHeader>
@@ -80,6 +82,7 @@ export function Leaderboard() {
                     ? `${((player.wins / player.totalGames) * 100).toFixed(1)}%` 
                     : "0%"}
                 </TableCell>
+                <TableCell>{player.penaltyCount}</TableCell>
                 <TableCell>{player.elo}</TableCell>
               </TableRow>
             ))}
