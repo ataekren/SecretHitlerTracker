@@ -4,11 +4,12 @@ import { Inter } from "next/font/google"
 import "./globals.css"
 import { Toaster } from "@/components/ui/toaster"
 
+
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "Secret Hitler - Keep in Mind",
-  description: "Keep in Mind - Secret Hitler",
+  title: "KIM | Secret Hitler Match Tracker",
+  description: "A web-based platform to track Secret Hitler match results, player roles, and win statistics. Easily record and analyze game history for a better gaming experience.",
   icons: {
     icon: "/favicon.png",
   },

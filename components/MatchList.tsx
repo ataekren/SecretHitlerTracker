@@ -72,9 +72,12 @@ export function MatchList() {
 
   return (
     <Card>
-      <CardHeader>
-        <CardTitle>Son Maçlar</CardTitle>
-      </CardHeader>
+      <CardHeader className="pb-0">
+          <div className="flex items-center justify-between">
+            <CardTitle className="text-muted-foreground">Son Maçlar</CardTitle>
+            <img src="/history.png" alt="History Logo" className="w-7 h-7" />
+          </div>
+        </CardHeader>
       <CardContent className="card-content">
         <Table>
           <TableHeader>

@@ -5,6 +5,9 @@ import { collection, query, orderBy, limit, onSnapshot } from "firebase/firestor
 import { db } from "@/lib/firebase"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Germania_One } from 'next/font/google'
+import { Pirata_One } from "next/font/google"
+
 
 interface Player {
   id: string
@@ -19,6 +22,16 @@ interface Player {
   hitlerGames: number
   hitlerWins: number
 }
+
+const germaniaOne = Germania_One({
+  subsets: ["latin"],
+  weight: '400',
+})
+
+const pirataOne = Pirata_One ({
+  subsets: ["latin"],
+  weight: '400',
+})
 
 export function Leaderboard() {
   const [players, setPlayers] = useState<Player[]>([])
@@ -38,8 +51,8 @@ export function Leaderboard() {
 
   return (
     <Card>
-      <CardHeader>
-        <CardTitle>Liderlik Tablosu</CardTitle>
+      <CardHeader className="text-center pb-2">
+        <CardTitle className={`text-[36px] tracking-wide text-muted-foreground ${germaniaOne.className}`}>LEADERBOARD</CardTitle>
       </CardHeader>
       <CardContent>
         <Table>
@@ -76,4 +89,3 @@ export function Leaderboard() {
     </Card>
   )
 }
-
