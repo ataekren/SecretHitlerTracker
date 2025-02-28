@@ -22,7 +22,7 @@ interface Match {
   players: { id: string; name: string; role: string }[]
 }
 
-export default function AdminPlayerMatchHistory() {
+export default function AdminStats() {
   const [players, setPlayers] = useState<Player[]>([])
   const [matches, setMatches] = useState<Match[]>([])
 
