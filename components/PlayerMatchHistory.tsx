@@ -54,19 +54,24 @@ export function PlayerMatchHistory() {
 
   useEffect(() => {
     if (matches.length > 0 && players.length > 0) {
+      const currentOrder = players.map(p => p.id).join(',');
       const sortedPlayers = [...players].sort((a, b) => {
         const aMatches = matches.filter(match =>
           match.players.some(player => player.id === a.id)
-        ).length
+        ).length;
         const bMatches = matches.filter(match =>
           match.players.some(player => player.id === b.id)
-        ).length
-        return bMatches - aMatches
-      })
-      setPlayers(sortedPlayers)
+        ).length;
+        return bMatches - aMatches;
+      });
+      
+      const newOrder = sortedPlayers.map(p => p.id).join(',');
+      if (currentOrder !== newOrder) {
+        setPlayers(sortedPlayers);
+      }
     }
-  }, [matches, players])
-
+  }, [matches]);
+  
   const getPlayerMatchHistory = (playerId: string) => {
     const playerMatches = matches.filter((match) =>
       match.players.some((player) => player.id === playerId)
