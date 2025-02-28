@@ -11,16 +11,18 @@ import { DataConsistencyChecker } from "@/components/DataConsistencyChecker"
 interface Player {
   id: string
   name: string
+  penaltyCount: number
 }
 
 interface Match {
   id: string
   date: string
   winner: string
+  elo: number
   players: { id: string; name: string; role: string }[]
 }
 
-export default function AdminPlayerMatchHistory() {
+export default function AdminStats() {
   const [players, setPlayers] = useState<Player[]>([])
   const [matches, setMatches] = useState<Match[]>([])
 
@@ -29,7 +31,7 @@ export default function AdminPlayerMatchHistory() {
     const unsubscribePlayers = onSnapshot(playersQuery, (querySnapshot) => {
       const playersData: Player[] = []
       querySnapshot.forEach((doc) => {
-        playersData.push({ id: doc.id, name: doc.data().name })
+        playersData.push({ id: doc.id, name: doc.data().name, penaltyCount: doc.data().penaltyCount })
       })
       setPlayers(playersData)
     })
@@ -68,10 +70,15 @@ export default function AdminPlayerMatchHistory() {
     }).length
     const losses = totalMatches - wins
 
+    const playerData = players.find(p => p.id === playerId)
+    const penaltyDeduction = (playerData?.penaltyCount || 0) * 5
+    const elo = 1000 + (wins * 10) + (losses * (-10)) - penaltyDeduction
+
     return {
       totalMatches,
       wins,
-      losses
+      losses,
+      elo
     }
   }
 
@@ -141,6 +148,7 @@ export default function AdminPlayerMatchHistory() {
                 <TableHead className="text-center">Maç Sayısı</TableHead>
                 <TableHead className="text-center">Kazanılan</TableHead>
                 <TableHead className="text-center">Kaybedilen</TableHead>
+                <TableHead className="text-center">ELO</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -152,6 +160,7 @@ export default function AdminPlayerMatchHistory() {
                     <TableCell className="text-center">{stats.totalMatches}</TableCell>
                     <TableCell className="text-center">{stats.wins}</TableCell>
                     <TableCell className="text-center">{stats.losses}</TableCell>
+                    <TableCell className="text-center">{stats.elo}</TableCell>
                   </TableRow>
                 )
               })}

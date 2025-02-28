@@ -237,10 +237,10 @@ export function DataConsistencyChecker() {
       </CardHeader>
       <CardContent>
         {inconsistencies.length === 0 ? (
-          <Alert className="bg-green-500/10 border-green-500/20">
-            <CheckCircle2 className="h-5 w-5 text-green-500" />
-            <AlertTitle>Tutarlı</AlertTitle>
-            <AlertDescription>
+          <Alert className="mb-2 mt-3 bg-green-500/10 border-green-500/20">
+            <CheckCircle2 className="h-6 w-6 text-green-500" />
+            <AlertTitle className="ml-2">Tutarlı</AlertTitle>
+            <AlertDescription className="ml-2">
               Oyuncu istatistikleri ve maç kayıtları arasında tutarsızlık bulunmamaktadır.
             </AlertDescription>
           </Alert>
