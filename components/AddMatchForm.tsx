@@ -52,6 +52,15 @@ export function AddMatchForm() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    if (selectedPlayers.length === 7 && !validatePlayerRoles()) {
+      toast({
+        title: "Hata",
+        description: "7 oyunculu oyunlarda 4 Liberal, 2 Faşist ve 1 Hitler olmalıdır.",
+        variant: "destructive",
+      })
+      return
+    }
+    
     if (selectedPlayers.length > 0 && selectedPlayers.every(p => p.role) && winner) {
       try {
         const matchData = {
@@ -174,6 +183,18 @@ export function AddMatchForm() {
     }
   }
 
+  const validatePlayerRoles = () => {
+    if (selectedPlayers.length !== 7) return true;
+  
+    const roleCounts = {
+      Liberal: selectedPlayers.filter(p => p.role === "Liberal").length,
+      Faşist: selectedPlayers.filter(p => p.role === "Faşist").length,
+      Hitler: selectedPlayers.filter(p => p.role === "Hitler").length,
+    };
+  
+    return roleCounts.Liberal === 4 && roleCounts.Faşist === 2 && roleCounts.Hitler === 1;
+  };
+
   return (
     <Card>
       <CardHeader>
@@ -289,7 +310,12 @@ export function AddMatchForm() {
           
           <Button 
             type="submit" 
-            disabled={!selectedPlayers.length || !selectedPlayers.every(p => p.role) || !winner}
+            disabled={
+              !selectedPlayers.length || 
+              !selectedPlayers.every(p => p.role) || 
+              !winner ||
+              (selectedPlayers.length === 7 && !validatePlayerRoles())
+            }
             className="w-full"
           >
             Maç Sonucu Ekle
