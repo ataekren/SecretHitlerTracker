@@ -5,6 +5,8 @@ import { collection, query, orderBy, limit, onSnapshot } from "firebase/firestor
 import { db } from "@/lib/firebase"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { DataConsistencyChecker } from "@/components/DataConsistencyChecker"
+
 
 interface Player {
   id: string
@@ -18,7 +20,7 @@ interface Match {
   players: { id: string; name: string; role: string }[]
 }
 
-export function AdminPlayerMatchHistory() {
+export default function AdminPlayerMatchHistory() {
   const [players, setPlayers] = useState<Player[]>([])
   const [matches, setMatches] = useState<Match[]>([])
 
@@ -73,39 +75,194 @@ export function AdminPlayerMatchHistory() {
     }
   }
 
+  const getLiberalStats = (playerId: string) => {
+    const liberalMatches = matches.filter((match) =>
+      match.players.some((player) => player.id === playerId && player.role === "Liberal")
+    )
+
+    const totalLiberalMatches = liberalMatches.length
+    const liberalWins = liberalMatches.filter((match) => match.winner === "Liberal").length
+    const liberalLosses = totalLiberalMatches - liberalWins
+
+    return {
+      totalLiberalMatches,
+      liberalWins,
+      liberalLosses
+    }
+  }
+
+  const getFascistStats = (playerId: string) => {
+    const fascistMatches = matches.filter((match) =>
+      match.players.some((player) => player.id === playerId && player.role === "Faşist")
+    )
+  
+    const totalFascistMatches = fascistMatches.length
+    const fascistWins = fascistMatches.filter((match) => match.winner === "Faşist").length
+    const fascistLosses = totalFascistMatches - fascistWins
+  
+    return {
+      totalFascistMatches,
+      fascistWins,
+      fascistLosses
+    }
+  }
+  
+  const getHitlerStats = (playerId: string) => {
+    const hitlerMatches = matches.filter((match) =>
+      match.players.some((player) => player.id === playerId && player.role === "Hitler")
+    )
+  
+    const totalHitlerMatches = hitlerMatches.length
+    const hitlerWins = hitlerMatches.filter((match) => match.winner === "Faşist").length
+    const hitlerLosses = totalHitlerMatches - hitlerWins
+  
+    return {
+      totalHitlerMatches,
+      hitlerWins,
+      hitlerLosses
+    }
+  }
+
   return (
-    <Card>
-      <CardHeader className="pb-1">
-        <div className="flex items-center justify-between">
-          <CardTitle className="text-muted-foreground">Maç İstatistikleri</CardTitle>
-          <img src="/stats.png" alt="Stats Logo" className="w-7 h-7 opacity-55" />
-        </div>
-      </CardHeader>
-      <CardContent>
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>İsim</TableHead>
-              <TableHead className="text-center">Maç Sayısı</TableHead>
-              <TableHead className="text-center">Kazanılan</TableHead>
-              <TableHead className="text-center">Kaybedilen</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {players.map((player) => {
-              const stats = getPlayerStats(player.id)
-              return (
-                <TableRow key={player.id}>
-                  <TableCell>{player.name}</TableCell>
-                  <TableCell className="text-center">{stats.totalMatches}</TableCell>
-                  <TableCell className="text-center">{stats.wins}</TableCell>
-                  <TableCell className="text-center">{stats.losses}</TableCell>
+    <div className="space-y-8">
+      <DataConsistencyChecker />
+      <Card>
+        <CardHeader className="pb-1">
+          <div className="flex items-center justify-between">
+            <CardTitle className="text-muted-foreground">Maç İstatistikleri</CardTitle>
+            <img src="/stats.png" alt="Stats Logo" className="w-7 h-7 opacity-55" />
+          </div>
+        </CardHeader>
+        <CardContent>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>İsim</TableHead>
+                <TableHead className="text-center">Maç Sayısı</TableHead>
+                <TableHead className="text-center">Kazanılan</TableHead>
+                <TableHead className="text-center">Kaybedilen</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {players.map((player) => {
+                const stats = getPlayerStats(player.id)
+                return (
+                  <TableRow key={player.id}>
+                    <TableCell>{player.name}</TableCell>
+                    <TableCell className="text-center">{stats.totalMatches}</TableCell>
+                    <TableCell className="text-center">{stats.wins}</TableCell>
+                    <TableCell className="text-center">{stats.losses}</TableCell>
+                  </TableRow>
+                )
+              })}
+            </TableBody>
+          </Table>
+        </CardContent>
+      </Card>
+  
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <Card>
+          <CardHeader className="pb-1">
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-blue-500">Liberal İstatistikleri</CardTitle>
+              <img src="/liberal.png" alt="Liberal Stats Logo" className="w-8 h-8" />
+            </div>
+          </CardHeader>
+          <CardContent>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>İsim</TableHead>
+                  <TableHead className="text-center">Maç</TableHead>
+                  <TableHead className="text-center">Kazanma</TableHead>
+                  <TableHead className="text-center">Kaybetme</TableHead>
                 </TableRow>
-              )
-            })}
-          </TableBody>
-        </Table>
-      </CardContent>
-    </Card>
+              </TableHeader>
+              <TableBody>
+                {players.map((player) => {
+                  const stats = getLiberalStats(player.id)
+                  return (
+                    <TableRow key={player.id}>
+                      <TableCell>{player.name}</TableCell>
+                      <TableCell className="text-center">{stats.totalLiberalMatches}</TableCell>
+                      <TableCell className="text-center">{stats.liberalWins}</TableCell>
+                      <TableCell className="text-center">{stats.liberalLosses}</TableCell>
+                    </TableRow>
+                  )
+                })}
+              </TableBody>
+            </Table>
+          </CardContent>
+        </Card>
+  
+        <Card>
+          <CardHeader className="pb-1">
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-red-500">Faşist İstatistikleri</CardTitle>
+              <img src="/fasist.png" alt="Fascist Stats Logo" className="w-8 h-8" />
+            </div>
+          </CardHeader>
+          <CardContent>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>İsim</TableHead>
+                  <TableHead className="text-center">Maç</TableHead>
+                  <TableHead className="text-center">Kazanma</TableHead>
+                  <TableHead className="text-center">Kaybetme</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {players.map((player) => {
+                  const stats = getFascistStats(player.id)
+                  return (
+                    <TableRow key={player.id}>
+                      <TableCell>{player.name}</TableCell>
+                      <TableCell className="text-center">{stats.totalFascistMatches}</TableCell>
+                      <TableCell className="text-center">{stats.fascistWins}</TableCell>
+                      <TableCell className="text-center">{stats.fascistLosses}</TableCell>
+                    </TableRow>
+                  )
+                })}
+              </TableBody>
+            </Table>
+          </CardContent>
+        </Card>
+  
+        <Card>
+          <CardHeader className="pb-1">
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-red-700">Hitler İstatistikleri</CardTitle>
+              <img src="/hitler.png" alt="Hitler Stats Logo" className="w-8 h-8" />
+            </div>
+          </CardHeader>
+          <CardContent>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>İsim</TableHead>
+                  <TableHead className="text-center">Maç</TableHead>
+                  <TableHead className="text-center">Kazanma</TableHead>
+                  <TableHead className="text-center">Kaybetme</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {players.map((player) => {
+                  const stats = getHitlerStats(player.id)
+                  return (
+                    <TableRow key={player.id}>
+                      <TableCell>{player.name}</TableCell>
+                      <TableCell className="text-center">{stats.totalHitlerMatches}</TableCell>
+                      <TableCell className="text-center">{stats.hitlerWins}</TableCell>
+                      <TableCell className="text-center">{stats.hitlerLosses}</TableCell>
+                    </TableRow>
+                  )
+                })}
+              </TableBody>
+            </Table>
+          </CardContent>
+        </Card>
+      </div>
+    </div>
   )
 }

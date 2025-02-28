@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect } from "react"
+import { useEffect, lazy, Suspense } from "react"
 import { useRouter } from "next/navigation"
 import { useAuthState } from "react-firebase-hooks/auth"
 import { auth } from "@/lib/firebase"
@@ -9,8 +9,9 @@ import { AddPlayerForm } from "@/components/AddPlayerForm"
 import { AddMatchForm } from "@/components/AddMatchForm"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { PlayerMatchHistory } from "@/components/PlayerMatchHistory"
-import { AdminPlayerMatchHistory } from "@/components/AdminPlayerMatchHistory"
+
+const AdminPlayerMatchHistory = lazy(() => import("@/components/AdminPlayerMatchHistory"))
+
 
 export default function AdminPanel() {
   const [user, loading] = useAuthState(auth)
@@ -44,7 +45,7 @@ export default function AdminPanel() {
               <TabsList>
                 <TabsTrigger value="add-player">Oyuncu Ekle</TabsTrigger>
                 <TabsTrigger value="add-match">Maç Sonucu Ekle</TabsTrigger>
-                <TabsTrigger value="matches">Maçlar</TabsTrigger>
+                <TabsTrigger value="matches">İstatistikler</TabsTrigger>
               </TabsList>
               <TabsContent value="add-player">
                 <AddPlayerForm />
@@ -53,7 +54,13 @@ export default function AdminPanel() {
                 <AddMatchForm />
               </TabsContent>
               <TabsContent value="matches">
-                <AdminPlayerMatchHistory />
+                <Suspense fallback={
+                    <div className="flex justify-center items-center py-8">
+                      İstatistikler yükleniyor...
+                    </div>
+                  }>
+                  <AdminPlayerMatchHistory />
+                </Suspense>
               </TabsContent>
             </Tabs>
           </CardContent>
