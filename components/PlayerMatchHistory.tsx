@@ -52,6 +52,21 @@ export function PlayerMatchHistory() {
     }
   }, [])
 
+  useEffect(() => {
+    if (matches.length > 0 && players.length > 0) {
+      const sortedPlayers = [...players].sort((a, b) => {
+        const aMatches = matches.filter(match =>
+          match.players.some(player => player.id === a.id)
+        ).length
+        const bMatches = matches.filter(match =>
+          match.players.some(player => player.id === b.id)
+        ).length
+        return bMatches - aMatches
+      })
+      setPlayers(sortedPlayers)
+    }
+  }, [matches, players])
+
   const getPlayerMatchHistory = (playerId: string) => {
     const playerMatches = matches.filter((match) =>
       match.players.some((player) => player.id === playerId)
@@ -69,17 +84,17 @@ export function PlayerMatchHistory() {
   return (
     <Card>
       <CardHeader className="pb-1">
-      <div className="flex items-center justify-between">
-            <CardTitle className="text-muted-foreground">Oyuncu Maç Geçmişi</CardTitle>
-            <img src="/playerHistory.png" alt="History Logo" className="w-7 h-7 opacity-55" />
-          </div>
+        <div className="flex items-center justify-between">
+          <CardTitle className="text-muted-foreground">Oyuncu Maç Geçmişi</CardTitle>
+          <img src="/playerHistory.png" alt="History Logo" className="w-7 h-7 opacity-55" />
+        </div>
       </CardHeader>
       <CardContent>
         <Table>
           <TableHeader>
             <TableRow>
               <TableHead>İsim</TableHead>
-              <TableHead>Maçlar (Yeniden Eskiye)</TableHead >
+              <TableHead>Maçlar (Yeniden Eskiye)</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -88,7 +103,7 @@ export function PlayerMatchHistory() {
                 <TableCell>{player.name}</TableCell>
                 <TableCell className="text-center align-middle">
                   <div className="flex items-center flex-wrap">
-                    {getPlayerMatchHistory(player.id).slice(0,24).map((isWinner, index) => {
+                    {getPlayerMatchHistory(player.id).slice(0, 24).map((isWinner, index) => {
                       const bgColor = isWinner ? "bg-green-600" : "bg-red-500"
 
                       return (
