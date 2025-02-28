@@ -175,7 +175,7 @@ export function AdminMatches() {
       <DeleteConfirmDialog />
       <CardHeader className="pb-0">
         <div className="flex items-center justify-between">
-          <CardTitle className="text-muted-foreground">Maç Listesi</CardTitle>
+          <CardTitle>Maç Listesi</CardTitle>
           <Image src="/history.png" alt="History Logo" width={28} height={28} />
         </div>
       </CardHeader>

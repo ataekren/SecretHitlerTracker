@@ -136,7 +136,7 @@ export default function AdminStats() {
       <Card>
         <CardHeader className="pb-1">
           <div className="flex items-center justify-between">
-            <CardTitle className="text-muted-foreground">Maç İstatistikleri</CardTitle>
+            <CardTitle>Maç İstatistikleri</CardTitle>
             <img src="/stats.png" alt="Stats Logo" className="w-7 h-7 opacity-55" />
           </div>
         </CardHeader>

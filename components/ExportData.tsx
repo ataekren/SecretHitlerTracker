@@ -37,7 +37,6 @@ export function ExportData() {
 
   useEffect(() => {
     const fetchData = async () => {
-      // Fetch players
       const playersSnapshot = await getDocs(collection(db, "players"))
       const playersData: Player[] = []
       playersSnapshot.forEach((doc) => {
@@ -45,7 +44,6 @@ export function ExportData() {
       })
       setPlayers(playersData)
 
-      // Fetch matches
       const matchesQuery = query(collection(db, "matches"), orderBy("date", "desc"))
       const matchesSnapshot = await getDocs(matchesQuery)
       const matchesData: Match[] = []
@@ -104,7 +102,6 @@ export function ExportData() {
       ...matchesRows
     ].map(row => row.join(",")).join("\n")
 
-    // Create and download files
     const date = new Date().toLocaleDateString('tr-TR').replace(/\./g, '-')
     
     // Download Leaderboard CSV
@@ -133,7 +130,7 @@ export function ExportData() {
     <Card>
       <CardHeader className="pb-1">
         <div className="flex items-center justify-between">
-          <CardTitle className="text-muted-foreground">Veri Yedekleme</CardTitle>
+          <CardTitle>Veri Yedekleme</CardTitle>
           <img src="/backup.png" alt="Backup Logo" className="w-7 h-7 opacity-55" />
         </div>
       </CardHeader>

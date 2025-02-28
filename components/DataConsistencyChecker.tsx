@@ -231,7 +231,7 @@ export function DataConsistencyChecker() {
     <Card>
       <CardHeader className="pb-1">
         <div className="flex items-center justify-between">
-          <CardTitle className="text-muted-foreground">Veri Tutarlılık Kontrolü</CardTitle>
+          <CardTitle>Veri Tutarlılık Kontrolü</CardTitle>
           <img src="/check.png" alt="Check Logo" className="w-8 h-8 opacity-55" />
         </div>
       </CardHeader>
