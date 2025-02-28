@@ -10,6 +10,7 @@ import { AddMatchForm } from "@/components/AddMatchForm"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { AdminMatches } from "@/components/AdminMatches"
+import { ExportData } from "@/components/ExportData"
 
 const AdminStats = lazy(() => import("@/components/AdminStats"))
 
@@ -48,6 +49,7 @@ export default function AdminPanel() {
                 <TabsTrigger value="matches">Maçlar</TabsTrigger>
                 <TabsTrigger value="add-match">Maç Sonucu Ekle</TabsTrigger>
                 <TabsTrigger value="add-player">Oyuncu Ekle</TabsTrigger>
+                <TabsTrigger value="export">Dışa Aktar</TabsTrigger>
               </TabsList>
               <TabsContent value="stats">
                 <Suspense fallback={
@@ -66,6 +68,9 @@ export default function AdminPanel() {
               </TabsContent>
               <TabsContent value="add-player">
                 <AddPlayerForm />
+              </TabsContent>
+              <TabsContent value="export">
+                <ExportData />
               </TabsContent>
             </Tabs>
           </CardContent>
