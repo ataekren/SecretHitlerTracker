@@ -41,19 +41,13 @@ export default function AdminPanel() {
             <CardDescription>Oyuncu ekleyin veya maç sonucu girin!</CardDescription>
           </CardHeader>
           <CardContent>
-            <Tabs defaultValue="add-player" className="space-y-4">
+            <Tabs defaultValue="add-match" className="space-y-4">
               <TabsList>
-                <TabsTrigger value="add-player">Oyuncu Ekle</TabsTrigger>
+                <TabsTrigger value="stats">İstatistikler</TabsTrigger>
                 <TabsTrigger value="add-match">Maç Sonucu Ekle</TabsTrigger>
-                <TabsTrigger value="matches">İstatistikler</TabsTrigger>
+                <TabsTrigger value="add-player">Oyuncu Ekle</TabsTrigger>
               </TabsList>
-              <TabsContent value="add-player">
-                <AddPlayerForm />
-              </TabsContent>
-              <TabsContent value="add-match">
-                <AddMatchForm />
-              </TabsContent>
-              <TabsContent value="matches">
+              <TabsContent value="stats">
                 <Suspense fallback={
                     <div className="flex justify-center items-center py-8">
                       İstatistikler yükleniyor...
@@ -61,6 +55,12 @@ export default function AdminPanel() {
                   }>
                   <AdminPlayerMatchHistory />
                 </Suspense>
+              </TabsContent>
+              <TabsContent value="add-match">
+                <AddMatchForm />
+              </TabsContent>
+              <TabsContent value="add-player">
+                <AddPlayerForm />
               </TabsContent>
             </Tabs>
           </CardContent>

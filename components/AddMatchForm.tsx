@@ -298,7 +298,7 @@ export function AddMatchForm() {
       </CardContent>
       <CardFooter>
         <div className="border-t pt-4 w-full">
-          <h3 className="text-sg font-semibold mb-2">Oyuncuya Ceza Ver</h3>
+          <h3 className="text-sg font-semibold mb-3">Oyuncuya Ceza Ver</h3>
           <div className="flex gap-2 items-center">
             <select
               value={penaltyPlayer || ""}
