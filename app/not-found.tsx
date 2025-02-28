@@ -39,7 +39,7 @@ export default function NotFound() {
               Bu sayfaya erişim yetkiniz yok veya sayfa artık mevcut değil.
             </p>
             <p className="text-red-500/80 italic text-sm">
-              "Belki de bu bir Liberal komplodur?"
+              Belki de bu bir Liberal komplodur?
             </p>
           </div>
 

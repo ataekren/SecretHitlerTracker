@@ -4,7 +4,6 @@ import { Leaderboard } from "@/components/Leaderboard"
 import { RoleStats } from "@/components/RoleStats"
 import Image from "next/image"
 import { PlayerMatchHistory } from "@/components/PlayerMatchHistory"
-import { DataConsistencyChecker } from "@/components/DataConsistencyChecker"
 
 export default function Home() {
   return (
