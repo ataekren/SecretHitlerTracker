@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { collection, query, orderBy, limit, onSnapshot } from "firebase/firestore"
+import { collection, query, orderBy, onSnapshot } from "firebase/firestore"
 import { db } from "@/lib/firebase"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -18,6 +18,8 @@ export function MatchList() {
   const [matches, setMatches] = useState<Match[]>([])
   const [currentPage, setCurrentPage] = useState(1)
   const matchesPerPage = 15
+
+  const [expandedMatches, setExpandedMatches] = useState<Set<string>>(new Set())
 
   useEffect(() => {
     const q = query(collection(db, "matches"), orderBy("date", "desc"))
@@ -44,39 +46,30 @@ export function MatchList() {
     }
   }
 
-  const scrollToTableBottom = () => {
-    const cardContent = document.querySelector('.card-content')
-    if (cardContent) {
-      cardContent.scrollIntoView({ 
-        behavior: 'auto', 
-        block: 'end',
-        inline: 'nearest' 
-      })
+  const handlePreviousPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1)
     }
   }
 
-  const handlePreviousPage = () => {
-    if (currentPage > 1) {
-      const isLastPage = currentPage === totalPages
-      const matchesInLastPage = matches.length % matchesPerPage
-      const hasFewerMatches = isLastPage && matchesInLastPage > 0 && matchesInLastPage < matchesPerPage
-
-      setCurrentPage(currentPage - 1)
-
-      if (hasFewerMatches) {
-        setTimeout(scrollToTableBottom, 10)
-      }
+  const togglePlayers = (matchId: string) => {
+    const newExpandedMatches = new Set(expandedMatches)
+    if (newExpandedMatches.has(matchId)) {
+      newExpandedMatches.delete(matchId)
+    } else {
+      newExpandedMatches.add(matchId)
     }
+    setExpandedMatches(newExpandedMatches)
   }
 
   return (
     <Card>
       <CardHeader className="pb-0">
-          <div className="flex items-center justify-between">
-            <CardTitle className="text-muted-foreground">Son Maçlar</CardTitle>
-            <img src="/history.png" alt="History Logo" className="w-7 h-7" />
-          </div>
-        </CardHeader>
+        <div className="flex items-center justify-between">
+          <CardTitle className="text-muted-foreground">Son Maçlar</CardTitle>
+          <img src="/history.png" alt="History Logo" className="w-7 h-7" />
+        </div>
+      </CardHeader>
       <CardContent className="card-content">
         <Table>
           <TableHeader>
@@ -89,7 +82,7 @@ export function MatchList() {
           <TableBody>
             {currentMatches.map((match) => (
               <TableRow key={match.id}>
-                <TableCell>
+                <TableCell className="whitespace-nowrap">
                   {new Date(match.date).toLocaleString('tr-TR', {
                     year: 'numeric',
                     month: 'numeric',
@@ -119,10 +112,8 @@ export function MatchList() {
                   })()}
                 </TableCell>
                 <TableCell className="align-middle">
-                  {match.players.map((player) => {
+                  {match.players.slice(0, expandedMatches.has(match.id) ? match.players.length : 7).map((player) => {
                     let bgColor = ""
-                    
-                    // Rol rengini belirle
                     switch (player.role) {
                       case "Liberal":
                         bgColor = "bg-blue-500"
@@ -135,7 +126,6 @@ export function MatchList() {
                         break
                     }
 
-                    // Kazanan oyuncuları belirle
                     const isWinner = 
                       (match.winner === "Liberal" && player.role === "Liberal") || 
                       (match.winner === "Faşist" && (player.role === "Faşist" || player.role === "Hitler"))
@@ -151,30 +141,49 @@ export function MatchList() {
                       </span>
                     )
                   })}
+                  
+                  {match.players.length > 7 && (
+                    <Button
+                      variant="outline"
+                      onClick={() => togglePlayers(match.id)} 
+                      className="inline-block rounded-full px-3 py-1 text-xs font-semibold mr-2 mb-1 mt-1 text-gray-500 h-8 border-2 border-grey-500"
+                      >
+                      {expandedMatches.has(match.id) ? `Daralt` : `+${match.players.length - 7}`}
+                    </Button>
+                  )}
                 </TableCell>
               </TableRow>
             ))}
           </TableBody>
         </Table>
-        <div className="flex justify-center items-center mt-4">
-          <Button 
-            onClick={handlePreviousPage} 
-            disabled={currentPage === 1}
-            className="mr-2 text-xl"
-          >
-            ←
-          </Button>
-          <span className="mx-4">
-            Sayfa {currentPage} / {totalPages}
+        <div className="flex justify-between items-center mt-4">
+          {/* Sayfa seçim kısmı */}
+          <div className="flex justify-center items-center flex-grow">
+            <Button 
+              onClick={handlePreviousPage} 
+              disabled={currentPage === 1}
+              className="mr-2 text-xl"
+            >
+              ←
+            </Button>
+            <span className="mx-4">
+              Sayfa {currentPage} / {totalPages}
+            </span>
+            <Button 
+              onClick={handleNextPage} 
+              disabled={currentPage === totalPages}
+              className="ml-2 text-xl"
+            >
+              →
+            </Button>
+          </div>
+
+          {/* Toplam maç sayısı */}
+          <span className="text-gray-600 text-s">
+            Toplam Maç: {matches.length}
           </span>
-          <Button 
-            onClick={handleNextPage} 
-            disabled={currentPage === totalPages}
-            className="ml-2 text-xl"
-          >
-            →
-          </Button>
         </div>
+        
       </CardContent>
     </Card>
   )
