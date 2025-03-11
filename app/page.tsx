@@ -2,6 +2,7 @@ import { Navbar } from "@/components/Navbar"
 import { MatchList } from "@/components/MatchList"
 import { Leaderboard } from "@/components/Leaderboard"
 import { RoleStats } from "@/components/RoleStats"
+import { WinnerRolesStats } from "@/components/WinnerRolesStats"
 import Image from "next/image"
 import { PlayerMatchHistory } from "@/components/PlayerMatchHistory"
 
@@ -22,6 +23,7 @@ export default function Home() {
         <Leaderboard />
         <RoleStats />
         <MatchList />
+        <WinnerRolesStats />
         <PlayerMatchHistory />
         </main>
     </div>

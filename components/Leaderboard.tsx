@@ -79,8 +79,8 @@ export function Leaderboard() {
                 <TableCell>{player.totalGames - player.wins}</TableCell>
                 <TableCell>
                   {player.totalGames > 0 
-                    ? `${((player.wins / player.totalGames) * 100).toFixed(1)}%` 
-                    : "0%"}
+                    ? `%${((player.wins / player.totalGames) * 100).toFixed(1)}` 
+                    : "%0"}
                 </TableCell>
                 <TableCell>{player.penaltyCount}</TableCell>
                 <TableCell>{player.elo}</TableCell>
