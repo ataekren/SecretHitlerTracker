@@ -34,8 +34,7 @@ export function PlayerMatchHistory() {
 
     const matchesQuery = query(
       collection(db, "matches"),
-      orderBy("date", "desc"),
-      limit(50)
+      orderBy("date", "desc")
     )
 
     const unsubscribeMatches = onSnapshot(matchesQuery, (querySnapshot) => {
