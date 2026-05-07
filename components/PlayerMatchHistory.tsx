@@ -63,14 +63,14 @@ export function PlayerMatchHistory() {
         ).length;
         return bMatches - aMatches;
       });
-      
+
       const newOrder = sortedPlayers.map(p => p.id).join(',');
       if (currentOrder !== newOrder) {
         setPlayers(sortedPlayers);
       }
     }
   }, [matches]);
-  
+
   const getPlayerMatchHistory = (playerId: string) => {
     const playerMatches = matches.filter((match) =>
       match.players.some((player) => player.id === playerId)
@@ -104,20 +104,38 @@ export function PlayerMatchHistory() {
           <TableBody>
             {players.map((player) => (
               <TableRow key={player.id}>
-                <TableCell>{player.name}</TableCell>
+                <TableCell className="max-w-[115px] sm:max-w-[115px] truncate font-medium" title={player.name}>
+                  {player.name}
+                </TableCell>
                 <TableCell className="text-center align-middle">
                   <div className="flex items-center flex-wrap">
-                    {getPlayerMatchHistory(player.id).slice(0, 24).map((isWinner, index) => {
-                      const bgColor = isWinner ? "bg-green-600" : "bg-red-500"
+                    {(() => {
+                      const history = getPlayerMatchHistory(player.id).slice(0, 24);
+                      const emptyCount = Math.max(0, 24 - history.length);
 
                       return (
-                        <span
-                          key={index}
-                          className={`w-10 h-8 flex items-center justify-center ${bgColor} text-white rounded-full text-sm font-semibold tracking-wider mr-2 mt-1 mb-1`}>
-                          {isWinner ? "W" : "L"}
-                        </span>
-                      )
-                    })}
+                        <>
+                          {history.map((isWinner, index) => {
+                            const bgColor = isWinner ? "bg-green-600" : "bg-red-500";
+
+                            return (
+                              <span
+                                key={`match-${index}`}
+                                className={`w-10 h-8 flex items-center justify-center ${bgColor} text-white rounded-full text-sm font-semibold tracking-wider mr-2 mt-1 mb-1`}>
+                                {isWinner ? "W" : "L"}
+                              </span>
+                            );
+                          })}
+                          {Array.from({ length: emptyCount }).map((_, index) => (
+                            <span
+                              key={`empty-${index}`}
+                              className="w-10 h-8 flex items-center justify-center bg-gray-400 opacity-50 text-white rounded-full text-sm font-semibold tracking-wider mr-2 mt-1 mb-1">
+                              -
+                            </span>
+                          ))}
+                        </>
+                      );
+                    })()}
                   </div>
                 </TableCell>
               </TableRow>
