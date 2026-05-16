@@ -54,7 +54,7 @@ export function ChangelogModal() {
               <img src="/hitler.png" alt="Hitler Right" className="w-8 h-8 object-contain" />
             </div>
             <p className="text-muted-foreground text-sm">
-              Sistemi daha keyifli ve rekabetçi hale getirmek için bazı harika güncellemeler yaptık!
+              Oyun deneyiminizi bir üst seviyeye taşıyacak yeni özellikler ve daha derinlemesine istatistikler yayında!
             </p>
           </div>
 
@@ -64,7 +64,7 @@ export function ChangelogModal() {
                 <BarChart3 className="w-4 h-4" />
               </div>
               <div>
-                <h3 className="font-bold text-sm">Oyuncu Profilleri Eklendi</h3>
+                <h3 className="font-bold text-sm">Oyuncu Profilleri</h3>
                 <p className="text-xs text-muted-foreground mt-0.5">
                   Artık oyuncu isimlerine tıklayarak o oyuncuya ait özel profil ekranını açabilirsiniz.
                 </p>
