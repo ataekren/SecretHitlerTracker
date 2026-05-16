@@ -149,16 +149,19 @@ export function PlayerProfile() {
 
   const winRate = player.totalGames > 0 ? ((player.wins / player.totalGames) * 100).toFixed(1) : "0"
 
-  const RoleBar = ({ label, games, wins, color }: { label: string; games: number; wins: number; color: string }) => {
+  const RoleBar = ({ label, games, wins, color, textColor }: { label: string; games: number; wins: number; color: string; textColor: string }) => {
     const rate = games > 0 ? ((wins / games) * 100) : 0
     return (
       <div className="space-y-1">
-        <div className="flex justify-between text-sm">
-          <span>{label}</span>
-          <span className="text-muted-foreground">{wins}/{games} (%{rate.toFixed(0)})</span>
+        <div className="flex justify-between items-center text-sm">
+          <span className={`font-medium ${textColor}`}>{label}</span>
+          <div className="flex items-center">
+            <span className="text-muted-foreground text-xs w-10 text-right whitespace-nowrap">{wins}/{games}</span>
+            <span className="font-semibold text-foreground text-xs w-10 text-right whitespace-nowrap">%{(rate).toFixed(0)}</span>
+          </div>
         </div>
-        <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
-          <div className={`h-full rounded-full ${color}`} style={{ width: `${rate}%` }} />
+        <div className="h-2 bg-gray-100 rounded-full overflow-hidden border border-gray-200/50">
+          <div className={`h-full rounded-full ${color} transition-all duration-500`} style={{ width: `${rate}%` }} />
         </div>
       </div>
     )
@@ -227,9 +230,9 @@ export function PlayerProfile() {
           {/* Role Stats */}
           <div className="space-y-2">
             <h3 className="text-sm font-semibold text-muted-foreground">Rol İstatistikleri</h3>
-            <RoleBar label="Liberal" games={roleStats.liberal.games} wins={roleStats.liberal.wins} color="bg-blue-500" />
-            <RoleBar label="Faşist" games={roleStats.fascist.games} wins={roleStats.fascist.wins} color="bg-red-500" />
-            <RoleBar label="Hitler" games={roleStats.hitler.games} wins={roleStats.hitler.wins} color="bg-red-700" />
+            <RoleBar label="Liberal" games={roleStats.liberal.games} wins={roleStats.liberal.wins} color="bg-blue-500" textColor="text-blue-500" />
+            <RoleBar label="Faşist" games={roleStats.fascist.games} wins={roleStats.fascist.wins} color="bg-red-500" textColor="text-red-500" />
+            <RoleBar label="Hitler" games={roleStats.hitler.games} wins={roleStats.hitler.wins} color="bg-red-700" textColor="text-red-700" />
           </div>
 
           {/* ELO Chart */}
