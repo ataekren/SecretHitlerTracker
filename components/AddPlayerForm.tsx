@@ -1,9 +1,10 @@
 "use client"
 
 import type React from "react"
-import { useState, useEffect } from "react"
-import { addDoc, collection, onSnapshot, doc, updateDoc } from "firebase/firestore"
+import { useState } from "react"
+import { addDoc, collection, doc, updateDoc } from "firebase/firestore"
 import { db } from "@/lib/firebase"
+import { usePlayers } from "@/lib/firebase-context"
 import { Pencil, Check, X } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -11,41 +12,11 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { toast } from "@/hooks/use-toast"
 
-interface Player {
-  id: string
-  name: string
-  wins: number
-  totalGames: number
-  elo: number
-  liberalGames: number
-  liberalWins: number
-  fascistGames: number
-  fascistWins: number
-  hitlerGames: number
-  hitlerWins: number
-  penaltyCount: number
-}
-
 export function AddPlayerForm() {
+  const players = usePlayers()
   const [name, setName] = useState("")
-  const [players, setPlayers] = useState<Array<{ id: string; name: string; wins: number; totalGames: number }>>([])
   const [editingPlayerId, setEditingPlayerId] = useState<string | null>(null)
   const [editName, setEditName] = useState("")
-
-  useEffect(() => {
-    const unsubscribe = onSnapshot(collection(db, "players"), (snapshot) => {
-      const playersData = snapshot.docs.map(
-        (doc) =>
-          ({
-            id: doc.id,
-            ...doc.data(),
-          }) as { id: string; name: string; wins: number; totalGames: number },
-      )
-      setPlayers(playersData)
-    })
-
-    return () => unsubscribe()
-  }, [])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -191,4 +162,3 @@ export function AddPlayerForm() {
     </Card>
   )
 }
-

@@ -1,38 +1,17 @@
 "use client"
 
-import { useEffect, useState } from "react"
-import { collection, query, orderBy, onSnapshot } from "firebase/firestore"
-import { db } from "@/lib/firebase"
+import { useState } from "react"
+import { useMatches } from "@/lib/firebase-context"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 
-interface Match {
-  id: string
-  date: string
-  winner: string
-  players: { name: string; role: string }[]
-}
-
 export function MatchList() {
-  const [matches, setMatches] = useState<Match[]>([])
+  const matches = useMatches()
   const [currentPage, setCurrentPage] = useState(1)
   const matchesPerPage = 15
 
   const [expandedMatches, setExpandedMatches] = useState<Set<string>>(new Set())
-
-  useEffect(() => {
-    const q = query(collection(db, "matches"), orderBy("date", "desc"))
-    const unsubscribe = onSnapshot(q, (querySnapshot) => {
-      const matchesData: Match[] = []
-      querySnapshot.forEach((doc) => {
-        matchesData.push({ id: doc.id, ...doc.data() } as Match)
-      })
-      setMatches(matchesData)
-    })
-
-    return () => unsubscribe()
-  }, [])
 
   const indexOfLastMatch = currentPage * matchesPerPage
   const indexOfFirstMatch = indexOfLastMatch - matchesPerPage

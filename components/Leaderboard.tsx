@@ -1,54 +1,24 @@
 "use client"
 
-import { useEffect, useState } from "react"
-import { collection, query, orderBy, limit, onSnapshot } from "firebase/firestore"
-import { db } from "@/lib/firebase"
+import { usePlayers } from "@/lib/firebase-context"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Germania_One } from 'next/font/google'
 import { Pirata_One } from "next/font/google"
 
 
-interface Player {
-  id: string
-  name: string
-  wins: number
-  totalGames: number
-  elo: number
-  liberalGames: number
-  liberalWins: number
-  fascistGames: number
-  fascistWins: number
-  hitlerGames: number
-  hitlerWins: number
-  penaltyCount: number
-}
-
 const germaniaOne = Germania_One({
   subsets: ["latin"],
   weight: '400',
 })
 
-const pirataOne = Pirata_One ({
+const pirataOne = Pirata_One({
   subsets: ["latin"],
   weight: '400',
 })
 
 export function Leaderboard() {
-  const [players, setPlayers] = useState<Player[]>([])
-
-  useEffect(() => {
-    const q = query(collection(db, "players"), orderBy("elo", "desc"))
-    const unsubscribe = onSnapshot(q, (querySnapshot) => {
-      const playersData: Player[] = []
-      querySnapshot.forEach((doc) => {
-        playersData.push({ id: doc.id, ...doc.data() } as Player)
-      })
-      setPlayers(playersData)
-    })
-
-    return () => unsubscribe()
-  }, [])
+  const players = usePlayers()
 
   return (
     <Card>
@@ -61,12 +31,12 @@ export function Leaderboard() {
             <TableRow>
               <TableHead>Sıra</TableHead>
               <TableHead>İsim</TableHead>
-              <TableHead>Toplam Oyun</TableHead>
-              <TableHead>Kazanılan Oyun</TableHead>
-              <TableHead>Kaybedilen Oyun</TableHead>
-              <TableHead>Kazanma Oranı</TableHead>
-              <TableHead>Ceza Sayısı</TableHead>
-              <TableHead>ELO</TableHead>
+              <TableHead className="text-center">Toplam Oyun</TableHead>
+              <TableHead className="text-center">Kazanılan Oyun</TableHead>
+              <TableHead className="text-center">Kaybedilen Oyun</TableHead>
+              <TableHead className="text-center">Kazanma Oranı</TableHead>
+              <TableHead className="text-center">Ceza</TableHead>
+              <TableHead className="text-center">ELO</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -74,16 +44,16 @@ export function Leaderboard() {
               <TableRow key={player.id}>
                 <TableCell>{index + 1}</TableCell>
                 <TableCell>{player.name}</TableCell>
-                <TableCell>{player.totalGames}</TableCell>
-                <TableCell>{player.wins}</TableCell>
-                <TableCell>{player.totalGames - player.wins}</TableCell>
-                <TableCell>
-                  {player.totalGames > 0 
-                    ? `%${((player.wins / player.totalGames) * 100).toFixed(1)}` 
+                <TableCell className="text-center">{player.totalGames}</TableCell>
+                <TableCell className="text-center">{player.wins}</TableCell>
+                <TableCell className="text-center">{player.totalGames - player.wins}</TableCell>
+                <TableCell className="text-center">
+                  {player.totalGames > 0
+                    ? `%${((player.wins / player.totalGames) * 100).toFixed(1)}`
                     : "%0"}
                 </TableCell>
-                <TableCell>{player.penaltyCount}</TableCell>
-                <TableCell>{player.elo}</TableCell>
+                <TableCell className="text-center">{player.penaltyCount}</TableCell>
+                <TableCell className="text-center">{player.elo}</TableCell>
               </TableRow>
             ))}
           </TableBody>

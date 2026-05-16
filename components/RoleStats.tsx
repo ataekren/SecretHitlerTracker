@@ -1,37 +1,11 @@
 "use client"
 
-import { useEffect, useState } from "react"
-import { collection, query, onSnapshot } from "firebase/firestore"
-import { db } from "@/lib/firebase"
+import { usePlayers } from "@/lib/firebase-context"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 
-interface Player {
-  id: string
-  name: string
-  liberalGames: number
-  liberalWins: number
-  fascistGames: number
-  fascistWins: number
-  hitlerGames: number
-  hitlerWins: number
-}
-
 export function RoleStats() {
-  const [players, setPlayers] = useState<Player[]>([])
-
-  useEffect(() => {
-    const q = query(collection(db, "players"))
-    const unsubscribe = onSnapshot(q, (querySnapshot) => {
-      const playersData: Player[] = []
-      querySnapshot.forEach((doc) => {
-        playersData.push({ id: doc.id, ...doc.data() } as Player)
-      })
-      setPlayers(playersData)
-    })
-
-    return () => unsubscribe()
-  }, [])
+  const players = usePlayers()
 
   const getLiberalPlayers = () => {
     return players

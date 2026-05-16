@@ -2,36 +2,21 @@
 
 import type React from "react"
 
-import { useState, useEffect } from "react"
-import { addDoc, collection, getDocs, updateDoc, doc, increment, query, orderBy, limit } from "firebase/firestore"
+import { useState } from "react"
+import { addDoc, collection, updateDoc, doc, increment } from "firebase/firestore"
 import { db } from "@/lib/firebase"
+import { usePlayers, useMatches } from "@/lib/firebase-context"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { toast } from "@/hooks/use-toast"
 import { Checkbox } from "@/components/ui/checkbox"
 
-interface Player {
-  id: string
-  name: string
-}
-
 export function AddMatchForm() {
-  const [players, setPlayers] = useState<Player[]>([])
+  const players = usePlayers()
+  const matches = useMatches()
   const [selectedPlayers, setSelectedPlayers] = useState<{id: string, role: string}[]>([])
   const [winner, setWinner] = useState("")
   const [penaltyPlayer, setPenaltyPlayer] = useState<string | null>(null)
-
-  useEffect(() => {
-    const fetchPlayers = async () => {
-      const querySnapshot = await getDocs(collection(db, "players"))
-      const playersData: Player[] = []
-      querySnapshot.forEach((doc) => {
-        playersData.push({ id: doc.id, name: doc.data().name })
-      })
-      setPlayers(playersData)
-    }
-    fetchPlayers()
-  }, [])
 
   const handlePlayerSelect = (playerId: string) => {
     setSelectedPlayers(prev => {
@@ -130,30 +115,18 @@ export function AddMatchForm() {
     }
   }
 
-  const selectPlayersFromLastMatch = async () => {
-    try {
-      const q = query(collection(db, "matches"), orderBy("date", "desc"), limit(1))
-      const querySnapshot = await getDocs(q)
-      
-      if (!querySnapshot.empty) {
-        const lastMatch = querySnapshot.docs[0].data()
-        const lastMatchPlayers = lastMatch.players.map((p: any) => ({
-          id: p.id,
-          role: "Liberal"
-        }))
-        setSelectedPlayers(lastMatchPlayers)
-      } else {
-        toast({
-          title: "Bilgi",
-          description: "Henüz hiç maç eklenmemiş.",
-        })
-      }
-    } catch (error) {
-      console.error("Son maç bilgileri alınırken hata oluştu:", error)
+  const selectPlayersFromLastMatch = () => {
+    if (matches.length > 0) {
+      const lastMatch = matches[0] // Already sorted by date desc from context
+      const lastMatchPlayers = lastMatch.players.map((p: any) => ({
+        id: p.id,
+        role: "Liberal"
+      }))
+      setSelectedPlayers(lastMatchPlayers)
+    } else {
       toast({
-        title: "Hata",
-        description: "Son maç bilgileri alınırken bir hata oluştu.",
-        variant: "destructive",
+        title: "Bilgi",
+        description: "Henüz hiç maç eklenmemiş.",
       })
     }
   }

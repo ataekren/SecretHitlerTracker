@@ -1,17 +1,9 @@
 "use client"
 
-import { useEffect, useState } from "react"
-import { collection, query, onSnapshot } from "firebase/firestore"
-import { db } from "@/lib/firebase"
+import { useMemo } from "react"
+import { useMatches } from "@/lib/firebase-context"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from "recharts"
-
-interface Match {
-  id: string
-  date: string
-  winner: string
-  players: { name: string; role: string }[]
-}
 
 interface WinnerStats {
   name: string
@@ -20,29 +12,20 @@ interface WinnerStats {
 }
 
 export function WinnerRolesStats() {
-  const [winnerStats, setWinnerStats] = useState<WinnerStats[]>([])
-  const [totalMatches, setTotalMatches] = useState<number>(0)
+  const matches = useMatches()
 
-  useEffect(() => {
-    const q = query(collection(db, "matches"))
-    const unsubscribe = onSnapshot(q, (querySnapshot) => {
-      const matches: Match[] = []
-      querySnapshot.forEach((doc) => {
-        matches.push({ id: doc.id, ...doc.data() } as Match)
-      })
-      
-      const liberalWins = matches.filter(match => match.winner === "Liberal").length
-      const fascistWins = matches.filter(match => match.winner === "Faşist").length
-      
-      setTotalMatches(matches.length)
-      setWinnerStats([
+  const { winnerStats, totalMatches } = useMemo(() => {
+    const liberalWins = matches.filter(match => match.winner === "Liberal").length
+    const fascistWins = matches.filter(match => match.winner === "Faşist").length
+    
+    return {
+      totalMatches: matches.length,
+      winnerStats: [
         { name: "Liberal", value: liberalWins, color: "#3b82f6" },
         { name: "Faşist", value: fascistWins, color: "#ef4444" }
-      ])
-    })
-
-    return () => unsubscribe()
-  }, [])
+      ] as WinnerStats[]
+    }
+  }, [matches])
 
   const calculatePercentage = (value: number): string => {
     if (totalMatches === 0) return "0%"

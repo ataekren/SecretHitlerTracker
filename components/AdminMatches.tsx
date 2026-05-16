@@ -1,8 +1,9 @@
 "use client"
 
-import { useEffect, useState } from "react"
-import { collection, query, orderBy, onSnapshot, doc, deleteDoc, updateDoc, increment } from "firebase/firestore"
+import { useState } from "react"
+import { doc, deleteDoc, updateDoc, increment } from "firebase/firestore"
 import { db } from "@/lib/firebase"
+import { useMatches } from "@/lib/firebase-context"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -24,24 +25,11 @@ interface Match {
 }
 
 export function AdminMatches() {
-  const [matches, setMatches] = useState<Match[]>([])
+  const matches = useMatches()
   const [currentPage, setCurrentPage] = useState(1)
   const [matchToDelete, setMatchToDelete] = useState<Match | null>(null)
   const [deletedMatchId, setDeletedMatchId] = useState<string | null>(null)
   const matchesPerPage = 15
-
-  useEffect(() => {
-    const q = query(collection(db, "matches"), orderBy("date", "desc"))
-    const unsubscribe = onSnapshot(q, (querySnapshot) => {
-      const matchesData: Match[] = []
-      querySnapshot.forEach((doc) => {
-        matchesData.push({ id: doc.id, ...doc.data() } as Match)
-      })
-      setMatches(matchesData)
-    })
-
-    return () => unsubscribe()
-  }, [])
 
   const handleDeleteMatch = async (match: Match) => {
     try {
