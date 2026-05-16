@@ -1,38 +1,19 @@
 "use client"
 
-import { useEffect, useState } from "react"
-import { collection, query, orderBy, onSnapshot } from "firebase/firestore"
-import { db } from "@/lib/firebase"
+import { useState } from "react"
+import { useMatches } from "@/lib/firebase-context"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-
-interface Match {
-  id: string
-  date: string
-  winner: string
-  players: { name: string; role: string }[]
-}
+import { usePlayerProfile } from "@/lib/player-profile-context"
 
 export function MatchList() {
-  const [matches, setMatches] = useState<Match[]>([])
+  const matches = useMatches()
+  const { openProfile } = usePlayerProfile()
   const [currentPage, setCurrentPage] = useState(1)
   const matchesPerPage = 15
 
   const [expandedMatches, setExpandedMatches] = useState<Set<string>>(new Set())
-
-  useEffect(() => {
-    const q = query(collection(db, "matches"), orderBy("date", "desc"))
-    const unsubscribe = onSnapshot(q, (querySnapshot) => {
-      const matchesData: Match[] = []
-      querySnapshot.forEach((doc) => {
-        matchesData.push({ id: doc.id, ...doc.data() } as Match)
-      })
-      setMatches(matchesData)
-    })
-
-    return () => unsubscribe()
-  }, [])
 
   const indexOfLastMatch = currentPage * matchesPerPage
   const indexOfFirstMatch = indexOfLastMatch - matchesPerPage
@@ -126,28 +107,29 @@ export function MatchList() {
                         break
                     }
 
-                    const isWinner = 
-                      (match.winner === "Liberal" && player.role === "Liberal") || 
+                    const isWinner =
+                      (match.winner === "Liberal" && player.role === "Liberal") ||
                       (match.winner === "Faşist" && (player.role === "Faşist" || player.role === "Hitler"))
-                    
+
                     const winnerStyle = isWinner ? "border-2 border-green-400" : ""
 
                     return (
                       <span
                         key={player.name}
-                        className={`inline-block ${bgColor} text-white rounded-full px-3 py-1 text-s font-semibold mr-2 mb-1 mt-1 ${winnerStyle}`}
+                        onClick={() => openProfile(player.id)}
+                        className={`inline-block ${bgColor} text-white rounded-full px-3 py-1 text-s font-semibold mr-2 mb-1 mt-1 cursor-pointer hover:opacity-80 transition-opacity ${winnerStyle}`}
                       >
                         {player.name} ({player.role})
                       </span>
                     )
                   })}
-                  
+
                   {match.players.length > 7 && (
                     <Button
                       variant="outline"
-                      onClick={() => togglePlayers(match.id)} 
+                      onClick={() => togglePlayers(match.id)}
                       className="inline-block rounded-full px-3 py-1 text-xs font-semibold mr-2 mb-1 mt-1 text-gray-500 h-8 border-2 border-grey-500"
-                      >
+                    >
                       {expandedMatches.has(match.id) ? `Daralt` : `+${match.players.length - 7}`}
                     </Button>
                   )}
@@ -159,20 +141,22 @@ export function MatchList() {
         <div className="flex justify-between items-center mt-4">
           {/* Sayfa seçim kısmı */}
           <div className="flex justify-center items-center flex-grow">
-            <Button 
-              onClick={handlePreviousPage} 
+            <Button
+              variant="secondary"
+              onClick={handlePreviousPage}
               disabled={currentPage === 1}
-              className="mr-2 text-xl"
+              className="text-xl rounded-full"
             >
               ←
             </Button>
-            <span className="mx-4">
+            <span className="mx-4 text-gray-600 text-s">
               Sayfa {currentPage} / {totalPages}
             </span>
-            <Button 
-              onClick={handleNextPage} 
-              disabled={currentPage === totalPages}
-              className="ml-2 text-xl"
+            <Button
+              variant="secondary"
+              onClick={handleNextPage}
+              disabled={currentPage >= totalPages}
+              className="text-xl rounded-full"
             >
               →
             </Button>
@@ -183,7 +167,7 @@ export function MatchList() {
             Toplam Maç: {matches.length}
           </span>
         </div>
-        
+
       </CardContent>
     </Card>
   )

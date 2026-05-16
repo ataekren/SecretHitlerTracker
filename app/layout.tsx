@@ -3,6 +3,7 @@ import type { Metadata } from "next"
 import { Inter } from "next/font/google"
 import "./globals.css"
 import { Toaster } from "@/components/ui/toaster"
+import { Providers } from "@/components/Providers"
 import Link from "next/link"
 
 const inter = Inter({ subsets: ["latin"] })
@@ -26,7 +27,9 @@ export default function RootLayout({
         <link rel="icon" href={process.env.BRANDING === "TR" ? "/tr-favicon.png" : "/favicon.png"} />
       </head>
       <body className={inter.className}>
-        {children}
+        <Providers>
+          {children}
+        </Providers>
         <Toaster />
         <footer className="bg-primary text-muted-foreground py-4 mt-8">
           <div className="container mx-auto px-4 flex justify-between items-center">

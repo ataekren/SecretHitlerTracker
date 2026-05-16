@@ -1,75 +1,29 @@
 "use client"
 
-import { useEffect, useState } from "react"
-import { collection, query, orderBy, limit, onSnapshot } from "firebase/firestore"
-import { db } from "@/lib/firebase"
+import { useMemo } from "react"
+import { usePlayers, useMatches } from "@/lib/firebase-context"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-
-interface Player {
-  id: string
-  name: string
-}
-
-interface Match {
-  id: string
-  date: string
-  winner: string
-  players: { id: string; name: string; role: string }[]
-}
+import { PlayerName } from "@/components/PlayerName"
 
 export function PlayerMatchHistory() {
-  const [players, setPlayers] = useState<Player[]>([])
-  const [matches, setMatches] = useState<Match[]>([])
+  const contextPlayers = usePlayers()
+  const matches = useMatches()
 
-  useEffect(() => {
-    const playersQuery = query(collection(db, "players"))
-    const unsubscribePlayers = onSnapshot(playersQuery, (querySnapshot) => {
-      const playersData: Player[] = []
-      querySnapshot.forEach((doc) => {
-        playersData.push({ id: doc.id, name: doc.data().name })
-      })
-      setPlayers(playersData)
+  // Sort players by match count (descending) - same logic as original
+  const sortedPlayers = useMemo(() => {
+    if (matches.length === 0 || contextPlayers.length === 0) return contextPlayers
+
+    return [...contextPlayers].sort((a, b) => {
+      const aMatches = matches.filter(match =>
+        match.players.some(player => player.id === a.id)
+      ).length
+      const bMatches = matches.filter(match =>
+        match.players.some(player => player.id === b.id)
+      ).length
+      return bMatches - aMatches
     })
-
-    const matchesQuery = query(
-      collection(db, "matches"),
-      orderBy("date", "desc")
-    )
-
-    const unsubscribeMatches = onSnapshot(matchesQuery, (querySnapshot) => {
-      const matchesData: Match[] = []
-      querySnapshot.forEach((doc) => {
-        matchesData.push({ id: doc.id, ...doc.data() } as Match)
-      })
-      setMatches(matchesData)
-    })
-
-    return () => {
-      unsubscribePlayers()
-      unsubscribeMatches()
-    }
-  }, [])
-
-  useEffect(() => {
-    if (matches.length > 0 && players.length > 0) {
-      const currentOrder = players.map(p => p.id).join(',');
-      const sortedPlayers = [...players].sort((a, b) => {
-        const aMatches = matches.filter(match =>
-          match.players.some(player => player.id === a.id)
-        ).length;
-        const bMatches = matches.filter(match =>
-          match.players.some(player => player.id === b.id)
-        ).length;
-        return bMatches - aMatches;
-      });
-
-      const newOrder = sortedPlayers.map(p => p.id).join(',');
-      if (currentOrder !== newOrder) {
-        setPlayers(sortedPlayers);
-      }
-    }
-  }, [matches]);
+  }, [contextPlayers, matches])
 
   const getPlayerMatchHistory = (playerId: string) => {
     const playerMatches = matches.filter((match) =>
@@ -102,10 +56,10 @@ export function PlayerMatchHistory() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {players.map((player) => (
+            {sortedPlayers.map((player) => (
               <TableRow key={player.id}>
                 <TableCell className="max-w-[115px] sm:max-w-[115px] truncate font-medium" title={player.name}>
-                  {player.name}
+                  <PlayerName playerId={player.id} name={player.name} />
                 </TableCell>
                 <TableCell className="text-center align-middle">
                   <div className="flex items-center flex-wrap">

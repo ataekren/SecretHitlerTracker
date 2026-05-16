@@ -1,59 +1,14 @@
 "use client"
 
-import { useEffect, useState } from "react"
-import { collection, query, orderBy, limit, onSnapshot } from "firebase/firestore"
-import { db } from "@/lib/firebase"
+import { usePlayers, useMatches } from "@/lib/firebase-context"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { DataConsistencyChecker } from "@/components/DataConsistencyChecker"
 
 
-interface Player {
-  id: string
-  name: string
-  penaltyCount: number
-}
-
-interface Match {
-  id: string
-  date: string
-  winner: string
-  elo: number
-  players: { id: string; name: string; role: string }[]
-}
-
 export default function AdminStats() {
-  const [players, setPlayers] = useState<Player[]>([])
-  const [matches, setMatches] = useState<Match[]>([])
-
-  useEffect(() => {
-    const playersQuery = query(collection(db, "players"))
-    const unsubscribePlayers = onSnapshot(playersQuery, (querySnapshot) => {
-      const playersData: Player[] = []
-      querySnapshot.forEach((doc) => {
-        playersData.push({ id: doc.id, name: doc.data().name, penaltyCount: doc.data().penaltyCount })
-      })
-      setPlayers(playersData)
-    })
-
-    const matchesQuery = query(
-      collection(db, "matches"),
-      orderBy("date", "desc")
-    )
-
-    const unsubscribeMatches = onSnapshot(matchesQuery, (querySnapshot) => {
-      const matchesData: Match[] = []
-      querySnapshot.forEach((doc) => {
-        matchesData.push({ id: doc.id, ...doc.data() } as Match)
-      })
-      setMatches(matchesData)
-    })
-
-    return () => {
-      unsubscribePlayers()
-      unsubscribeMatches()
-    }
-  }, [])
+  const players = usePlayers()
+  const matches = useMatches()
 
   const getPlayerStats = (playerId: string) => {
     const playerMatches = matches.filter((match) =>

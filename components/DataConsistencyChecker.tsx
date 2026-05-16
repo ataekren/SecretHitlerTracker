@@ -1,38 +1,12 @@
 "use client"
 
-import { useEffect, useState } from "react"
-import { collection, query, orderBy, onSnapshot } from "firebase/firestore"
-import { db } from "@/lib/firebase"
+import { useMemo } from "react"
+import { usePlayers, useMatches } from "@/lib/firebase-context"
+import type { Player, Match } from "@/lib/firebase-context"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { CheckCircle2, AlertTriangle } from "lucide-react"
-
-interface Player {
-    id: string
-    name: string
-    wins: number
-    totalGames: number
-    elo: number
-    liberalGames: number
-    liberalWins: number
-    fascistGames: number
-    fascistWins: number
-    hitlerGames: number
-    hitlerWins: number
-    penaltyCount: number
-  }
-
-interface Match {
-id: string
-date: string
-winner: "Liberal" | "Faşist"
-players: {
-    id: string
-    name: string
-    role: "Liberal" | "Faşist" | "Hitler"
-}[]
-}
 
 interface MatchPlayer {
   id: string
@@ -48,40 +22,11 @@ interface Inconsistency {
 }
 
 export function DataConsistencyChecker() {
-  const [players, setPlayers] = useState<Player[]>([])
-  const [matches, setMatches] = useState<Match[]>([])
+  const players = usePlayers()
+  const matches = useMatches()
 
-  useEffect(() => {
-    const playersQuery = query(collection(db, "players"))
-    const unsubscribePlayers = onSnapshot(playersQuery, (querySnapshot) => {
-      const playersData: Player[] = []
-      querySnapshot.forEach((doc) => {
-        playersData.push({ id: doc.id, ...doc.data() } as Player)
-      })
-      setPlayers(playersData)
-    })
-
-    const matchesQuery = query(
-      collection(db, "matches"),
-      orderBy("date", "desc")
-    )
-
-    const unsubscribeMatches = onSnapshot(matchesQuery, (querySnapshot) => {
-      const matchesData: Match[] = []
-      querySnapshot.forEach((doc) => {
-        matchesData.push({ id: doc.id, ...doc.data() } as Match)
-      })
-      setMatches(matchesData)
-    })
-
-    return () => {
-      unsubscribePlayers()
-      unsubscribeMatches()
-    }
-  }, [])
-
-  const findInconsistencies = () => {
-    const inconsistencies: Inconsistency[] = []
+  const inconsistencies = useMemo(() => {
+    const result: Inconsistency[] = []
 
     for (const player of players) {
       // Calculate stats from matches
@@ -141,7 +86,7 @@ export function DataConsistencyChecker() {
 
       // Compare with stored player data
       if (matchStats.totalMatches !== player.totalGames) {
-        inconsistencies.push({
+        result.push({
           player: player.name,
           field: "Toplam Maç Sayısı",
           stored: player.totalGames,
@@ -150,7 +95,7 @@ export function DataConsistencyChecker() {
       }
 
       if (matchStats.totalWins !== player.wins) {
-        inconsistencies.push({
+        result.push({
           player: player.name,
           field: "Toplam Kazanma Sayısı",
           stored: player.wins,
@@ -159,7 +104,7 @@ export function DataConsistencyChecker() {
       }
 
       if (matchStats.liberalMatches !== player.liberalGames) {
-        inconsistencies.push({
+        result.push({
           player: player.name,
           field: "Liberal Maç Sayısı",
           stored: player.liberalGames,
@@ -168,7 +113,7 @@ export function DataConsistencyChecker() {
       }
 
       if (matchStats.liberalWins !== player.liberalWins) {
-        inconsistencies.push({
+        result.push({
           player: player.name,
           field: "Liberal Kazanma",
           stored: player.liberalWins,
@@ -177,7 +122,7 @@ export function DataConsistencyChecker() {
       }
 
       if (matchStats.fascistMatches !== player.fascistGames) {
-        inconsistencies.push({
+        result.push({
           player: player.name,
           field: "Faşist Maç Sayısı",
           stored: player.fascistGames,
@@ -186,7 +131,7 @@ export function DataConsistencyChecker() {
       }
 
       if (matchStats.fascistWins !== player.fascistWins) {
-        inconsistencies.push({
+        result.push({
           player: player.name,
           field: "Faşist Kazanma",
           stored: player.fascistWins,
@@ -195,7 +140,7 @@ export function DataConsistencyChecker() {
       }
 
       if (matchStats.hitlerMatches !== player.hitlerGames) {
-        inconsistencies.push({
+        result.push({
           player: player.name,
           field: "Hitler Maç",
           stored: player.hitlerGames,
@@ -204,7 +149,7 @@ export function DataConsistencyChecker() {
       }
 
       if (matchStats.hitlerWins !== player.hitlerWins) {
-        inconsistencies.push({
+        result.push({
           player: player.name,
           field: "Hitler Kazanma",
           stored: player.hitlerWins,
@@ -213,7 +158,7 @@ export function DataConsistencyChecker() {
       }
 
       if (matchStats.calculatedElo !== player.elo) {
-        inconsistencies.push({
+        result.push({
           player: player.name,
           field: "ELO Puanı",
           stored: player.elo,
@@ -222,10 +167,8 @@ export function DataConsistencyChecker() {
       }
     }
 
-    return inconsistencies
-  }
-
-  const inconsistencies = findInconsistencies()
+    return result
+  }, [players, matches])
 
   return (
     <Card>

@@ -1,9 +1,10 @@
 "use client"
 
 import type React from "react"
-import { useState, useEffect } from "react"
-import { addDoc, collection, onSnapshot, doc, updateDoc } from "firebase/firestore"
+import { useState } from "react"
+import { addDoc, collection, doc, updateDoc } from "firebase/firestore"
 import { db } from "@/lib/firebase"
+import { usePlayers } from "@/lib/firebase-context"
 import { Pencil, Check, X } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -11,48 +12,30 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { toast } from "@/hooks/use-toast"
 
-interface Player {
-  id: string
-  name: string
-  wins: number
-  totalGames: number
-  elo: number
-  liberalGames: number
-  liberalWins: number
-  fascistGames: number
-  fascistWins: number
-  hitlerGames: number
-  hitlerWins: number
-  penaltyCount: number
-}
-
 export function AddPlayerForm() {
+  const players = usePlayers()
   const [name, setName] = useState("")
-  const [players, setPlayers] = useState<Array<{ id: string; name: string; wins: number; totalGames: number }>>([])
   const [editingPlayerId, setEditingPlayerId] = useState<string | null>(null)
   const [editName, setEditName] = useState("")
-
-  useEffect(() => {
-    const unsubscribe = onSnapshot(collection(db, "players"), (snapshot) => {
-      const playersData = snapshot.docs.map(
-        (doc) =>
-          ({
-            id: doc.id,
-            ...doc.data(),
-          }) as { id: string; name: string; wins: number; totalGames: number },
-      )
-      setPlayers(playersData)
-    })
-
-    return () => unsubscribe()
-  }, [])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (name.trim()) {
+      const trimmedName = name.trim()
+
+      // Check for uniqueness
+      if (players.some(p => p.name.toLowerCase() === trimmedName.toLowerCase())) {
+        toast({
+          title: "Hata!",
+          description: "Bu isimde bir oyuncu zaten sistemde mevcut! Lütfen farklı bir isim girin.",
+          variant: "destructive",
+        })
+        return
+      }
+
       try {
         await addDoc(collection(db, "players"), {
-          name: name.trim(),
+          name: trimmedName,
           wins: 0,
           totalGames: 0,
           elo: 1000,
@@ -91,10 +74,23 @@ export function AddPlayerForm() {
   }
 
   const handleEditSubmit = async (playerId: string) => {
-    if (editName.trim() && editName.trim() !== players.find(p => p.id === playerId)?.name) {
+    const trimmedEditName = editName.trim()
+    const currentPlayer = players.find(p => p.id === playerId)
+
+    if (trimmedEditName && currentPlayer && trimmedEditName !== currentPlayer.name) {
+      // Check for uniqueness
+      if (players.some(p => p.id !== playerId && p.name.toLowerCase() === trimmedEditName.toLowerCase())) {
+        toast({
+          title: "Hata",
+          description: "Bu isimde bir oyuncu zaten sistemde mevcut! Lütfen farklı bir isim girin.",
+          variant: "destructive",
+        })
+        return
+      }
+
       try {
         await updateDoc(doc(db, "players", playerId), {
-          name: editName.trim(),
+          name: trimmedEditName,
         })
         setEditingPlayerId(null)
         setEditName("")
@@ -191,4 +187,3 @@ export function AddPlayerForm() {
     </Card>
   )
 }
-

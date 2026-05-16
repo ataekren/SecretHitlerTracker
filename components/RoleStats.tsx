@@ -1,37 +1,12 @@
 "use client"
 
-import { useEffect, useState } from "react"
-import { collection, query, onSnapshot } from "firebase/firestore"
-import { db } from "@/lib/firebase"
+import { usePlayers } from "@/lib/firebase-context"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-
-interface Player {
-  id: string
-  name: string
-  liberalGames: number
-  liberalWins: number
-  fascistGames: number
-  fascistWins: number
-  hitlerGames: number
-  hitlerWins: number
-}
+import { PlayerName } from "@/components/PlayerName"
 
 export function RoleStats() {
-  const [players, setPlayers] = useState<Player[]>([])
-
-  useEffect(() => {
-    const q = query(collection(db, "players"))
-    const unsubscribe = onSnapshot(q, (querySnapshot) => {
-      const playersData: Player[] = []
-      querySnapshot.forEach((doc) => {
-        playersData.push({ id: doc.id, ...doc.data() } as Player)
-      })
-      setPlayers(playersData)
-    })
-
-    return () => unsubscribe()
-  }, [])
+  const players = usePlayers()
 
   const getLiberalPlayers = () => {
     return players
@@ -74,11 +49,11 @@ export function RoleStats() {
             <TableBody>
               {getLiberalPlayers().map((player) => (
                 <TableRow key={`liberal-${player.id}`}>
-                  <TableCell>{player.name}</TableCell>
+                  <TableCell><PlayerName playerId={player.id} name={player.name} /></TableCell>
                   <TableCell>{player.liberalGames}</TableCell>
                   <TableCell>{player.liberalWins}</TableCell>
                   <TableCell>
-                    {((player.liberalWins / player.liberalGames) * 100).toFixed(1)}%
+                    %{((player.liberalWins / player.liberalGames) * 100).toFixed(1)}
                   </TableCell>
                 </TableRow>
               ))}
@@ -108,11 +83,11 @@ export function RoleStats() {
             <TableBody>
               {getFascistPlayers().map((player) => (
                 <TableRow key={`fascist-${player.id}`}>
-                  <TableCell>{player.name}</TableCell>
+                  <TableCell><PlayerName playerId={player.id} name={player.name} /></TableCell>
                   <TableCell>{player.fascistGames}</TableCell>
                   <TableCell>{player.fascistWins}</TableCell>
                   <TableCell>
-                    {((player.fascistWins / player.fascistGames) * 100).toFixed(1)}%
+                    %{((player.fascistWins / player.fascistGames) * 100).toFixed(1)}
                   </TableCell>
                 </TableRow>
               ))}
@@ -142,11 +117,11 @@ export function RoleStats() {
             <TableBody>
               {getHitlerPlayers().map((player) => (
                 <TableRow key={`hitler-${player.id}`}>
-                  <TableCell>{player.name}</TableCell>
+                  <TableCell><PlayerName playerId={player.id} name={player.name} /></TableCell>
                   <TableCell>{player.hitlerGames}</TableCell>
                   <TableCell>{player.hitlerWins}</TableCell>
                   <TableCell>
-                    {((player.hitlerWins / player.hitlerGames) * 100).toFixed(1)}%
+                    %{((player.hitlerWins / player.hitlerGames) * 100).toFixed(1)}
                   </TableCell>
                 </TableRow>
               ))}

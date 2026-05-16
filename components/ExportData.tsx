@@ -1,59 +1,11 @@
-import { useEffect, useState } from "react"
-import { collection, query, getDocs, orderBy } from "firebase/firestore"
-import { db } from "@/lib/firebase"
+import { usePlayers, useMatches } from "@/lib/firebase-context"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Download } from "lucide-react"
 
-interface Player {
-  id: string
-  name: string
-  wins: number
-  totalGames: number
-  elo: number
-  liberalGames: number
-  liberalWins: number
-  fascistGames: number
-  fascistWins: number
-  hitlerGames: number
-  hitlerWins: number
-  penaltyCount: number
-}
-
-interface Match {
-  id: string
-  date: string
-  winner: string
-  players: {
-    id: string
-    name: string
-    role: string
-  }[]
-}
-
 export function ExportData() {
-  const [players, setPlayers] = useState<Player[]>([])
-  const [matches, setMatches] = useState<Match[]>([])
-
-  useEffect(() => {
-    const fetchData = async () => {
-      const playersSnapshot = await getDocs(collection(db, "players"))
-      const playersData: Player[] = []
-      playersSnapshot.forEach((doc) => {
-        playersData.push({ id: doc.id, ...doc.data() } as Player)
-      })
-      setPlayers(playersData)
-
-      const matchesQuery = query(collection(db, "matches"), orderBy("date", "desc"))
-      const matchesSnapshot = await getDocs(matchesQuery)
-      const matchesData: Match[] = []
-      matchesSnapshot.forEach((doc) => {
-        matchesData.push({ id: doc.id, ...doc.data() } as Match)
-      })
-      setMatches(matchesData)
-    }
-    fetchData()
-  }, [])
+  const players = usePlayers()
+  const matches = useMatches()
 
   const exportToCSV = () => {
     // Leaderboard CSV

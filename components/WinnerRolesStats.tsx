@@ -1,17 +1,9 @@
 "use client"
 
-import { useEffect, useState } from "react"
-import { collection, query, onSnapshot } from "firebase/firestore"
-import { db } from "@/lib/firebase"
+import { useMemo } from "react"
+import { useMatches } from "@/lib/firebase-context"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from "recharts"
-
-interface Match {
-  id: string
-  date: string
-  winner: string
-  players: { name: string; role: string }[]
-}
 
 interface WinnerStats {
   name: string
@@ -20,29 +12,20 @@ interface WinnerStats {
 }
 
 export function WinnerRolesStats() {
-  const [winnerStats, setWinnerStats] = useState<WinnerStats[]>([])
-  const [totalMatches, setTotalMatches] = useState<number>(0)
+  const matches = useMatches()
 
-  useEffect(() => {
-    const q = query(collection(db, "matches"))
-    const unsubscribe = onSnapshot(q, (querySnapshot) => {
-      const matches: Match[] = []
-      querySnapshot.forEach((doc) => {
-        matches.push({ id: doc.id, ...doc.data() } as Match)
-      })
-      
-      const liberalWins = matches.filter(match => match.winner === "Liberal").length
-      const fascistWins = matches.filter(match => match.winner === "Faşist").length
-      
-      setTotalMatches(matches.length)
-      setWinnerStats([
+  const { winnerStats, totalMatches } = useMemo(() => {
+    const liberalWins = matches.filter(match => match.winner === "Liberal").length
+    const fascistWins = matches.filter(match => match.winner === "Faşist").length
+
+    return {
+      totalMatches: matches.length,
+      winnerStats: [
         { name: "Liberal", value: liberalWins, color: "#3b82f6" },
         { name: "Faşist", value: fascistWins, color: "#ef4444" }
-      ])
-    })
-
-    return () => unsubscribe()
-  }, [])
+      ] as WinnerStats[]
+    }
+  }, [matches])
 
   const calculatePercentage = (value: number): string => {
     if (totalMatches === 0) return "0%"
@@ -68,7 +51,7 @@ export function WinnerRolesStats() {
     const { payload } = props
 
     return (
-      <div className="flex justify-center mt-4 space-x-6">
+      <div className="flex flex-wrap justify-center gap-x-6 gap-y-2">
         {payload.map((entry: any, index: number) => (
           <div key={`legend-${index}`} className="flex items-center">
             <div
@@ -86,14 +69,14 @@ export function WinnerRolesStats() {
 
   return (
     <Card>
-      <CardHeader className="pb-0">
+      <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
           <CardTitle className="text-muted-foreground">Kazanan Rol Dağılımı</CardTitle>
           <img src="/stats.png" alt="Stats Logo" className="w-7 h-7 opacity-55" />
         </div>
       </CardHeader>
-      <CardContent>
-        <div className="h-64 w-full">
+      <CardContent className="pb-6">
+        <div className="h-[280px] w-full flex justify-center items-center">
           {winnerStats.length > 0 ? (
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
@@ -113,7 +96,7 @@ export function WinnerRolesStats() {
                   ))}
                 </Pie>
                 <Tooltip content={customTooltip} />
-                <Legend content={renderCustomLegend} />
+                <Legend content={renderCustomLegend} verticalAlign="bottom" align="center" wrapperStyle={{ paddingTop: "20px" }} />
               </PieChart>
             </ResponsiveContainer>
           ) : (

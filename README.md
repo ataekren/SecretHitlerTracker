@@ -1,110 +1,92 @@
-# Secret Hitler Game Tracking App
+# 🎩 Secret Hitler Game Tracker & Analytics
 
-This project is a web application built with Next.js and Firebase to manage and display statistics for the game Secret Hitler. It allows administrators to add players and record match results, and provides a leaderboard and role-based statistics for players.
+An advanced, feature-rich web application built with **Next.js**, **Firebase**, and **Tailwind CSS** to track, manage, and deeply analyze match statistics for the popular social deduction board game, *Secret Hitler*. 
 
-## Features
+This platform moves beyond basic win/loss tracking by introducing ELO rankings, deep performance analytics, duo synergy tracking, and a comprehensive admin dashboard with strict game rule validation.
 
-*   **Admin Panel:**
-    *   Add new players to the database.
-    *   Record match results, including the winning role and participating players with their roles.
-*   **Leaderboard:** Displays a ranked list of players based on their ELO rating, including their win rate and total games played.
-*   **Role Statistics:** Provides statistics for each role (Liberal, Fascist, Hitler), showing the win rates for players in those roles.
-*   **Match List:** Lists recent matches with dates, winning roles, and participants.
-*   **Authentication:** Admin login to protect the admin panel.
+## ✨ Key Features
 
-## Motivation
-As passionate Secret Hitler players, we often struggled to keep track of our match results, individual player statistics and overall win rates. To solve this, I implemented a centralized platform that allows us to record game outcomes, analyze performance and gain deeper insights into our gameplay.
+### 🏆 ELO-Based Leaderboard
+- **Dynamic Ranking:** Players are ranked using a standard ELO system (starting at 1000) that adjusts based on match outcomes and opponents' strength.
+- **Win/Loss Streaks:** The leaderboard dynamically detects and displays active hot streaks (🔥) and cold streaks (❄️).
 
-## Technologies Used
+### 📊 Advanced Player Profiles
+Clicking on any player opens a highly detailed profile modal containing:
+- **ELO History Graph:** A beautiful line chart tracking the player's ELO progression over their entire match history.
+- **Activity Frequency (Bar Chart):** A 14-day trailing bar chart visualizing when and how often the player plays.
+- **Role Mastery:** Specific win rates and performance metrics when playing as Liberal, Fascist, or Hitler.
 
-*   **Next.js:** A React framework for building server-rendered web applications.
-*   **Firebase:** A platform for building web and mobile applications, providing authentication, database (Firestore), and hosting services.
-*   **React Firebase Hooks:** Useful React hooks for Firebase.
-*   **Tailwind CSS:** A utility-first CSS framework for styling the application.
-*   **Radix UI:** A set of unstyled, accessible UI primitives.
+### 👯‍♂️ Duo Analytics (Pair Stats)
+A specialized analytics engine that analyzes every possible duo combination across all matches to discover:
+- **Deadliest Duos:** The players who win the most when playing together.
+- **Worst Synergies:** The players who consistently lose when paired together.
 
-## Setup Instructions
+### 🛡️ Robust Admin Panel & Validation
+- **Game Rule Enforcement:** The "Add Match" form dynamically validates player configurations against official Secret Hitler rules (e.g., exactly 1 Fascist and 1 Hitler for a 5-6 player game).
+- **Interactive Error Handling:** Invalid setups prevent submission and provide clear, color-coded tooltips explaining why the setup is illegal.
+- **Unique Player Constraints:** The system prevents the creation or renaming of players to duplicate names, entirely eliminating data-entry confusion.
 
-1.  **Clone the repository:**
+### 🎨 Premium UI/UX
+- **Data Visualization:** Built with `recharts` for highly interactive, responsive charts (Line, Bar, and Pie).
+- **Modern Aesthetics:** Features a clean, component-based design utilizing Shadcn UI, Lucide Icons, and customized Tailwind typography with subtle UI animations.
 
-    ```bash
-    git clone https://github.com/ataekren/SecretHitlerTracker
-    cd secret-hitler-app
-    ```
+---
 
-2.  **Install dependencies:**
+## 🛠️ Technology Stack
 
-    ```bash
-    npm install
-    # or
-    yarn install
-    # or
-    pnpm install
-    ```
+- **Frontend:** Next.js 14 (App Router), React, Tailwind CSS, TypeScript
+- **UI Components:** Radix UI / Shadcn UI, Recharts, Lucide React
+- **Backend & Database:** Firebase Firestore
+- **Authentication:** Firebase Auth
 
-3.  **Set up Firebase:**
+---
 
-    *   Create a new project in the [Firebase Console](https://console.firebase.google.com/).
-    *   Enable Authentication (Email/Password).
-    *   Create a Firestore database.
-    *   Obtain your Firebase configuration.
+## 🚀 Setup & Installation
 
-4.  **Configure environment variables:**
+### 1. Clone the repository
+```bash
+git clone https://github.com/ataekren/SecretHitlerTracker.git
+cd SecretHitlerTracker
+```
 
-    *   Create a `.env` file in the project root.
-    *   Add your Firebase configuration to the `.env` file:
+### 2. Install dependencies
+```bash
+npm install
+```
 
-        ```
-        NEXT_PUBLIC_FIREBASE_API_KEY=<your_api_key>
-        NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=<your_auth_domain>
-        NEXT_PUBLIC_FIREBASE_PROJECT_ID=<your_project_id>
-        NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=<your_storage_bucket>
-        NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=<your_messaging_sender_id>
-        NEXT_PUBLIC_FIREBASE_APP_ID=<your_app_id>
-        ```
+### 3. Firebase Configuration
+1. Create a project on the [Firebase Console](https://console.firebase.google.com/).
+2. Enable **Firestore Database** and **Authentication** (Email/Password).
+3. Copy your Firebase config and create a `.env` file in the root directory:
 
-5.  **Run the development server:**
+```env
+NEXT_PUBLIC_FIREBASE_API_KEY=your_api_key
+NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=your_auth_domain
+NEXT_PUBLIC_FIREBASE_PROJECT_ID=your_project_id
+NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=your_storage_bucket
+NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=your_messaging_sender_id
+NEXT_PUBLIC_FIREBASE_APP_ID=your_app_id
+```
 
-    ```bash
-    npm run dev
-    # or
-    yarn dev
-    # or
-    pnpm dev
-    ```
+### 4. Run the Application
+```bash
+npm run dev
+```
+Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-    Open [http://localhost:3000](http://localhost:3000) with your browser to see the application.
+---
 
-## Data Model
+## 📁 Data Model Structure
 
-*   **Players:**
-    *   `id` (string): Firebase document ID.
-    *   `name` (string): Player's name.
-    *   `wins` (number): Total wins.
-    *   `totalGames` (number): Total games played.
-    *   `elo` (number): ELO rating.
-    *   `liberalGames` (number): Number of games played as Liberal.
-    *   `liberalWins` (number): Number of games won as Liberal.
-    *   `fascistGames` (number): Number of games played as Fascist.
-    *   `fascistWins` (number): Number of games won as Fascist.
-    *   `hitlerGames` (number): Number of games played as Hitler.
-    *   `hitlerWins` (number): Number of games won as Hitler.
-*   **Matches:**
-    *   `id` (string): Firebase document ID.
-    *   `date` (string): Date and time of the match (ISO string).
-    *   `winner` (string): Winning role (Liberal or Fascist).
-    *   `players` (array): Array of players with their names and roles.
+**Players (`players` collection):**
+- `id`: Firebase document ID
+- `name`: Unique player name
+- `elo`: Current ELO rating (default: 1000)
+- `wins`, `totalGames`: Global match statistics
+- `liberalWins`, `fascistWins`, `hitlerWins`: Role-specific wins
+- `penaltyCount`: Warning/Penalty tracker
 
-## Key Components
-
-*   `app/page.tsx`: Main landing page displaying the Leaderboard, RoleStats, and MatchList.
-*   `app/admin/page.tsx`: Admin panel for adding players and match results. Requires authentication.
-*   `app/login/page.tsx`: Login page for administrators.
-*   `components/AddPlayerForm.tsx`: Component for adding new players.
-*   `components/AddMatchForm.tsx`: Component for adding new match results.
-*   `components/Leaderboard.tsx`: Component displaying the player leaderboard.
-*   `components/RoleStats.tsx`: Component displaying role-based statistics.
-*   `components/MatchList.tsx`: Component displaying the list of recent matches.
-*   `components/Navbar.tsx`: Navigation bar with links and authentication status.
-*   `lib/firebase.ts`: Firebase initialization and configuration.
-
+**Matches (`matches` collection):**
+- `date`: ISO Timestamp
+- `winner`: "Liberal" or "Faşist"
+- `players`: Array of objects containing `{ id, name, role }`
