@@ -6,11 +6,13 @@ import { WinnerRolesStats } from "@/components/WinnerRolesStats"
 import { PairStats } from "@/components/PairStats"
 import Image from "next/image"
 import { PlayerMatchHistory } from "@/components/PlayerMatchHistory"
+import { ChangelogModal } from "@/components/ChangelogModal"
 
 export default function Home() {
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
+      <ChangelogModal />
       <main className="container mx-auto py-4 space-y-8">
         <div className="flex justify-center mt-2 mb-6">
           <Image
