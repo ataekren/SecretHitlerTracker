@@ -186,7 +186,8 @@ export function PlayerProfile() {
 
         <CardContent className="pt-8 space-y-6">
           {/* Header */}
-          <div className="flex items-center justify-between">
+          <div className="space-y-3">
+            <div className="flex items-center justify-between">
             <div>
               <div className="flex items-center gap-2">
                 <h2 className="text-2xl font-bold">{player.name}</h2>
@@ -208,11 +209,11 @@ export function PlayerProfile() {
               <div className="text-xs text-muted-foreground">ELO</div>
             </div>
           </div>
-
           <hr className="border-gray-200" />
+        </div>
 
-          {/* Stats Grid */}
-          <div className="grid grid-cols-5 gap-2">
+        {/* Stats Grid */}
+        <div className="grid grid-cols-5 gap-2">
             {[
               { label: "Toplam", value: player.totalGames },
               { label: "Galibiyet", value: player.wins },
