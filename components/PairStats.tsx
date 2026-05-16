@@ -4,6 +4,7 @@ import { useMemo } from "react"
 import { usePlayers, useMatches } from "@/lib/firebase-context"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { PlayerName } from "@/components/PlayerName"
 
 interface PairStatsProps {
   type: "win" | "lose"
@@ -14,7 +15,7 @@ export function PairStats({ type }: PairStatsProps) {
   const matches = useMatches()
 
   const pairs = useMemo(() => {
-    const pairMap = new Map<string, { names: [string, string]; count: number; totalGames: number }>()
+    const pairMap = new Map<string, { ids: [string, string]; names: [string, string]; count: number; totalGames: number }>()
 
     // First pass: count total games on the same team for all pairs
     const totalGamesMap = new Map<string, number>()
@@ -73,7 +74,7 @@ export function PairStats({ type }: PairStatsProps) {
           } else {
             const nameA = players.find(p => p.id === group[i])?.name || group[i]
             const nameB = players.find(p => p.id === group[j])?.name || group[j]
-            pairMap.set(key, { names: [nameA, nameB], count: 1, totalGames: totalGamesMap.get(key) || 0 })
+            pairMap.set(key, { ids: [group[i], group[j]], names: [nameA, nameB], count: 1, totalGames: totalGamesMap.get(key) || 0 })
           }
         }
       }
@@ -113,9 +114,9 @@ export function PairStats({ type }: PairStatsProps) {
               <TableRow key={index}>
                 <TableCell>{index + 1}</TableCell>
                 <TableCell>
-                  {pair.names[0]}
+                  <PlayerName playerId={pair.ids[0]} name={pair.names[0]} />
                   <span className="text-muted-foreground mx-1">-</span>
-                  {pair.names[1]}
+                  <PlayerName playerId={pair.ids[1]} name={pair.names[1]} />
                 </TableCell>
                 <TableCell className="text-center">{pair.totalGames}</TableCell>
                 <TableCell className="text-center">{pair.count}</TableCell>

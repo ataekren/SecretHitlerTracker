@@ -37,10 +37,12 @@ export function AddMatchForm() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (selectedPlayers.length === 7 && !validatePlayerRoles()) {
+    
+    const validationError = getValidationErrorMessage();
+    if (validationError) {
       toast({
         title: "Hata",
-        description: "7 oyunculu oyunlarda 4 Liberal, 2 Faşist ve 1 Hitler olmalıdır.",
+        description: validationError,
         variant: "destructive",
       })
       return
@@ -156,17 +158,39 @@ export function AddMatchForm() {
     }
   }
 
-  const validatePlayerRoles = () => {
-    if (selectedPlayers.length !== 7) return true;
-  
+  const getExpectedRoles = (playerCount: number) => {
+    if (playerCount === 5 || playerCount === 6) return { fascist: 1, hitler: 1, liberal: playerCount - 2 }
+    if (playerCount === 7 || playerCount === 8) return { fascist: 2, hitler: 1, liberal: playerCount - 3 }
+    if (playerCount === 9 || playerCount === 10) return { fascist: 3, hitler: 1, liberal: playerCount - 4 }
+    return null;
+  }
+
+  const getValidationErrorMessage = () => {
+    const count = selectedPlayers.length;
+    if (count === 0) return null;
+    
+    const expected = getExpectedRoles(count);
+    if (!expected) return null;
+
     const roleCounts = {
       Liberal: selectedPlayers.filter(p => p.role === "Liberal").length,
       Faşist: selectedPlayers.filter(p => p.role === "Faşist").length,
       Hitler: selectedPlayers.filter(p => p.role === "Hitler").length,
     };
-  
-    return roleCounts.Liberal === 4 && roleCounts.Faşist === 2 && roleCounts.Hitler === 1;
+
+    if (roleCounts.Liberal !== expected.liberal || roleCounts.Faşist !== expected.fascist || roleCounts.Hitler !== expected.hitler) {
+      return (
+        <span>
+          {count} kişilik oyunda: <span className="font-bold text-blue-500">{expected.liberal} Liberal</span>, <span className="font-bold text-red-500">{expected.fascist} Faşist</span> ve <span className="font-bold text-red-700">1 Hitler</span> olmalıdır.
+        </span>
+      );
+    }
+
+    return null;
   };
+
+  const validationError = getValidationErrorMessage();
+  const isSubmitDisabled = !selectedPlayers.length || !selectedPlayers.every(p => p.role) || !winner || validationError !== null;
 
   return (
     <Card>
@@ -281,18 +305,24 @@ export function AddMatchForm() {
             </div>
           </div>
           
-          <Button 
-            type="submit" 
-            disabled={
-              !selectedPlayers.length || 
-              !selectedPlayers.every(p => p.role) || 
-              !winner ||
-              (selectedPlayers.length === 7 && !validatePlayerRoles())
-            }
-            className="w-full"
-          >
-            Maç Sonucu Ekle
-          </Button>
+          <div className="relative group w-full">
+            <Button 
+              type="submit" 
+              disabled={isSubmitDisabled}
+              className="w-full"
+              style={isSubmitDisabled ? { pointerEvents: "none" } : {}}
+            >
+              Maç Sonucu Ekle
+            </Button>
+            {isSubmitDisabled && (
+              <div className="absolute inset-0" />
+            )}
+            {validationError && selectedPlayers.length >= 5 && selectedPlayers.length <= 10 && (
+              <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-1.5 bg-gray-200 text-foreground text-xs rounded-lg whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-50 shadow-md">
+                <span className="font-bold text-red-500">Hata:</span> {validationError}
+              </span>
+            )}
+          </div>
         </form>
       </CardContent>
       <CardFooter>

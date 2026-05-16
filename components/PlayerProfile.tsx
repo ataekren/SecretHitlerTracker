@@ -137,11 +137,11 @@ export function PlayerProfile() {
 
     return matches
       .filter(m => m.players.some(p => p.id === player.id))
-      .slice(0, 24)
+      .slice(0, 12)
       .map(match => {
         const role = match.players.find(p => p.id === player.id)?.role
         return (match.winner === "Liberal" && role === "Liberal") ||
-               (match.winner === "Faşist" && (role === "Faşist" || role === "Hitler"))
+          (match.winner === "Faşist" && (role === "Faşist" || role === "Hitler"))
       })
   }, [player, matches])
 
@@ -176,30 +176,37 @@ export function PlayerProfile() {
       >
         <button
           onClick={closeProfile}
-          className="absolute top-4 right-4 p-1 rounded-full hover:bg-gray-100 transition-colors"
+          className="absolute top-2 right-2 p-1 rounded-full hover:bg-gray-100 transition-colors"
         >
-          <X className="w-5 h-5" />
+          <X className="w-4 h-4" />
         </button>
 
-        <CardContent className="pt-6 space-y-6">
+        <CardContent className="pt-8 space-y-6">
           {/* Header */}
           <div className="flex items-center justify-between">
             <div>
-              <h2 className="text-2xl font-bold">{player.name}</h2>
-              <p className="text-muted-foreground text-sm">Sıralama: #{rank}</p>
+              <div className="flex items-center gap-2">
+                <h2 className="text-2xl font-bold">{player.name}</h2>
+                {streak && (
+                  <span className="relative group">
+                    <span className={`inline-flex items-center gap-0.5 px-2 py-0.5 rounded-full text-xs font-bold cursor-default bg-gray-200 ${streak.type === "win" ? "bg-gray-200 text-orange-500" : "bg-gray-200 text-blue-500"}`}>
+                      {streak.type === "win" ? "🔥" : "❄️"}{streak.count}{"\u2009"}
+                    </span>
+                    <span className="absolute top-full left-1/2 -translate-x-1/2 mt-2 px-3 py-1.5 bg-gray-200 text-foreground text-xs rounded-lg whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-50 shadow-md">
+                      <span className="font-bold">{player.name}</span> son {streak.count} maçını {streak.type === "win" ? "kazandı!" : "kaybetti!"}
+                    </span>
+                  </span>
+                )}
+              </div>
+              <p className="text-muted-foreground text-sm mt-1">Sıralama: #{rank}</p>
             </div>
             <div className="text-right">
               <div className="text-3xl font-bold">{player.elo}</div>
               <div className="text-xs text-muted-foreground">ELO</div>
-              {streak && (
-                <span className={`inline-flex items-center gap-0.5 px-2 py-0.5 rounded-full text-xs font-bold mt-1 ${
-                  streak.type === "win" ? "bg-gray-200 text-orange-500" : "bg-gray-200 text-blue-500"
-                }`}>
-                  {streak.type === "win" ? "🔥" : "❄️"}{streak.count}
-                </span>
-              )}
             </div>
           </div>
+
+          <hr className="border-gray-200" />
 
           {/* Stats Grid */}
           <div className="grid grid-cols-5 gap-2">
@@ -210,7 +217,7 @@ export function PlayerProfile() {
               { label: "Oran", value: `%${winRate}` },
               { label: "Ceza", value: player.penaltyCount },
             ].map((stat) => (
-              <div key={stat.label} className="bg-gray-50 rounded-lg p-3 text-center">
+              <div key={stat.label} className="bg-gray-100 rounded-lg p-3 text-center">
                 <div className="text-lg font-bold">{stat.value}</div>
                 <div className="text-xs text-muted-foreground">{stat.label}</div>
               </div>
@@ -218,7 +225,7 @@ export function PlayerProfile() {
           </div>
 
           {/* Role Stats */}
-          <div className="space-y-3">
+          <div className="space-y-2">
             <h3 className="text-sm font-semibold text-muted-foreground">Rol İstatistikleri</h3>
             <RoleBar label="Liberal" games={roleStats.liberal.games} wins={roleStats.liberal.wins} color="bg-blue-500" />
             <RoleBar label="Faşist" games={roleStats.fascist.games} wins={roleStats.fascist.wins} color="bg-red-500" />
@@ -248,7 +255,7 @@ export function PlayerProfile() {
                         return null
                       }}
                     />
-                    <Line type="monotone" dataKey="elo" stroke="#6366f1" strokeWidth={2} dot={false} />
+                    <Line type="natural" dataKey="elo" stroke="#4891ffff" strokeWidth={1.5} dot={false} activeDot={{ r: 5, strokeWidth: 0 }} />
                   </LineChart>
                 </ResponsiveContainer>
               </div>
@@ -257,15 +264,14 @@ export function PlayerProfile() {
 
           {/* Recent Matches */}
           {recentMatches.length > 0 && (
-            <div className="space-y-2">
+            <div className="space-y-2" style={{ marginTop: eloHistory.length > 1 ? "12px" : undefined }}>
               <h3 className="text-sm font-semibold text-muted-foreground">Son Maçlar</h3>
               <div className="flex flex-wrap gap-1.5">
                 {recentMatches.map((isWin, i) => (
                   <span
                     key={i}
-                    className={`w-8 h-7 flex items-center justify-center rounded-full text-xs font-bold text-white ${
-                      isWin ? "bg-green-600" : "bg-red-500"
-                    }`}
+                    className={`w-8 h-7 flex items-center justify-center rounded-full text-xs font-bold text-white ${isWin ? "bg-green-600" : "bg-red-500"
+                      }`}
                   >
                     {isWin ? "W" : "L"}
                   </span>
@@ -276,7 +282,7 @@ export function PlayerProfile() {
 
           {/* Best Partner */}
           {bestPartner && (
-            <div className="bg-gray-50 rounded-lg p-3 flex items-center justify-between">
+            <div className="bg-gray-100  rounded-lg p-3 flex items-center justify-between">
               <div>
                 <div className="text-xs text-muted-foreground">En İyi Partner</div>
                 <div className="font-semibold">{bestPartner.name}</div>

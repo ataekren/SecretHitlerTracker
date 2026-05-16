@@ -5,9 +5,11 @@ import { useMatches } from "@/lib/firebase-context"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
+import { usePlayerProfile } from "@/lib/player-profile-context"
 
 export function MatchList() {
   const matches = useMatches()
+  const { openProfile } = usePlayerProfile()
   const [currentPage, setCurrentPage] = useState(1)
   const matchesPerPage = 15
 
@@ -114,7 +116,8 @@ export function MatchList() {
                     return (
                       <span
                         key={player.name}
-                        className={`inline-block ${bgColor} text-white rounded-full px-3 py-1 text-s font-semibold mr-2 mb-1 mt-1 ${winnerStyle}`}
+                        onClick={() => openProfile(player.id)}
+                        className={`inline-block ${bgColor} text-white rounded-full px-3 py-1 text-s font-semibold mr-2 mb-1 mt-1 cursor-pointer hover:opacity-80 transition-opacity ${winnerStyle}`}
                       >
                         {player.name} ({player.role})
                       </span>
