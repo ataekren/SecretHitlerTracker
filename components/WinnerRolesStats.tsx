@@ -17,7 +17,7 @@ export function WinnerRolesStats() {
   const { winnerStats, totalMatches } = useMemo(() => {
     const liberalWins = matches.filter(match => match.winner === "Liberal").length
     const fascistWins = matches.filter(match => match.winner === "Faşist").length
-    
+
     return {
       totalMatches: matches.length,
       winnerStats: [
@@ -69,7 +69,7 @@ export function WinnerRolesStats() {
 
   return (
     <Card>
-      <CardHeader className="pb-0">
+      <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
           <CardTitle className="text-muted-foreground">Kazanan Rol Dağılımı</CardTitle>
           <img src="/stats.png" alt="Stats Logo" className="w-7 h-7 opacity-55" />

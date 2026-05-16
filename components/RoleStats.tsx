@@ -52,7 +52,7 @@ export function RoleStats() {
                   <TableCell>{player.liberalGames}</TableCell>
                   <TableCell>{player.liberalWins}</TableCell>
                   <TableCell>
-                    {((player.liberalWins / player.liberalGames) * 100).toFixed(1)}%
+                    %{((player.liberalWins / player.liberalGames) * 100).toFixed(1)}
                   </TableCell>
                 </TableRow>
               ))}
@@ -86,7 +86,7 @@ export function RoleStats() {
                   <TableCell>{player.fascistGames}</TableCell>
                   <TableCell>{player.fascistWins}</TableCell>
                   <TableCell>
-                    {((player.fascistWins / player.fascistGames) * 100).toFixed(1)}%
+                    %{((player.fascistWins / player.fascistGames) * 100).toFixed(1)}
                   </TableCell>
                 </TableRow>
               ))}
@@ -120,7 +120,7 @@ export function RoleStats() {
                   <TableCell>{player.hitlerGames}</TableCell>
                   <TableCell>{player.hitlerWins}</TableCell>
                   <TableCell>
-                    {((player.hitlerWins / player.hitlerGames) * 100).toFixed(1)}%
+                    %{((player.hitlerWins / player.hitlerGames) * 100).toFixed(1)}
                   </TableCell>
                 </TableRow>
               ))}

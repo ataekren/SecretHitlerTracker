@@ -105,10 +105,10 @@ export function MatchList() {
                         break
                     }
 
-                    const isWinner = 
-                      (match.winner === "Liberal" && player.role === "Liberal") || 
+                    const isWinner =
+                      (match.winner === "Liberal" && player.role === "Liberal") ||
                       (match.winner === "Faşist" && (player.role === "Faşist" || player.role === "Hitler"))
-                    
+
                     const winnerStyle = isWinner ? "border-2 border-green-400" : ""
 
                     return (
@@ -120,13 +120,13 @@ export function MatchList() {
                       </span>
                     )
                   })}
-                  
+
                   {match.players.length > 7 && (
                     <Button
                       variant="outline"
-                      onClick={() => togglePlayers(match.id)} 
+                      onClick={() => togglePlayers(match.id)}
                       className="inline-block rounded-full px-3 py-1 text-xs font-semibold mr-2 mb-1 mt-1 text-gray-500 h-8 border-2 border-grey-500"
-                      >
+                    >
                       {expandedMatches.has(match.id) ? `Daralt` : `+${match.players.length - 7}`}
                     </Button>
                   )}
@@ -138,20 +138,22 @@ export function MatchList() {
         <div className="flex justify-between items-center mt-4">
           {/* Sayfa seçim kısmı */}
           <div className="flex justify-center items-center flex-grow">
-            <Button 
-              onClick={handlePreviousPage} 
+            <Button
+              variant="secondary"
+              onClick={handlePreviousPage}
               disabled={currentPage === 1}
-              className="mr-2 text-xl"
+              className="text-xl rounded-full"
             >
               ←
             </Button>
-            <span className="mx-4">
+            <span className="mx-4 text-gray-600 text-s">
               Sayfa {currentPage} / {totalPages}
             </span>
-            <Button 
-              onClick={handleNextPage} 
-              disabled={currentPage === totalPages}
-              className="ml-2 text-xl"
+            <Button
+              variant="secondary"
+              onClick={handleNextPage}
+              disabled={currentPage >= totalPages}
+              className="text-xl rounded-full"
             >
               →
             </Button>
@@ -162,7 +164,7 @@ export function MatchList() {
             Toplam Maç: {matches.length}
           </span>
         </div>
-        
+
       </CardContent>
     </Card>
   )

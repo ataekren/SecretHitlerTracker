@@ -3,6 +3,7 @@ import { MatchList } from "@/components/MatchList"
 import { Leaderboard } from "@/components/Leaderboard"
 import { RoleStats } from "@/components/RoleStats"
 import { WinnerRolesStats } from "@/components/WinnerRolesStats"
+import { PairStats } from "@/components/PairStats"
 import Image from "next/image"
 import { PlayerMatchHistory } from "@/components/PlayerMatchHistory"
 
@@ -22,8 +23,12 @@ export default function Home() {
         </div>
         <Leaderboard />
         <RoleStats />
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <WinnerRolesStats />
+          <PairStats type="win" />
+          <PairStats type="lose" />
+        </div>
         <MatchList />
-        <WinnerRolesStats />
         <PlayerMatchHistory />
         </main>
     </div>
