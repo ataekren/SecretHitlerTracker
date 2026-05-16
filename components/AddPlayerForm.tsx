@@ -26,7 +26,7 @@ export function AddPlayerForm() {
       // Check for uniqueness
       if (players.some(p => p.name.toLowerCase() === trimmedName.toLowerCase())) {
         toast({
-          title: "Hata",
+          title: "Hata!",
           description: "Bu isimde bir oyuncu zaten sistemde mevcut! Lütfen farklı bir isim girin.",
           variant: "destructive",
         })
