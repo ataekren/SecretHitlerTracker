@@ -107,7 +107,7 @@ export function Leaderboard() {
                               : "bg-gray-200 text-blue-500"
                               }`}
                           >
-                            {streak.type === "win" ? "🔥" : "❄️"}{streak.count}
+                            {streak.type === "win" ? "🔥" : "❄️"}{streak.count}{"\u2009"}
                           </span>
                           <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-1.5 bg-gray-200 text-foreground text-xs rounded-lg whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-50 shadow-md">
                             <span className="font-bold">{player.name}</span> son {streak.count} maçını {streak.type === "win" ? "kazandı!" : "kaybetti!"}
