@@ -4,6 +4,7 @@ import { useMemo } from "react"
 import { usePlayers, useMatches } from "@/lib/firebase-context"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { PlayerName } from "@/components/PlayerName"
 
 export function PlayerMatchHistory() {
   const contextPlayers = usePlayers()
@@ -58,7 +59,7 @@ export function PlayerMatchHistory() {
             {sortedPlayers.map((player) => (
               <TableRow key={player.id}>
                 <TableCell className="max-w-[115px] sm:max-w-[115px] truncate font-medium" title={player.name}>
-                  {player.name}
+                  <PlayerName playerId={player.id} name={player.name} />
                 </TableCell>
                 <TableCell className="text-center align-middle">
                   <div className="flex items-center flex-wrap">

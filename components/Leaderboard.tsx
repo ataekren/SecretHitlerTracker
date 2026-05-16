@@ -4,6 +4,7 @@ import { useMemo } from "react"
 import { usePlayers, useMatches } from "@/lib/firebase-context"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { PlayerName } from "@/components/PlayerName"
 import { Germania_One } from 'next/font/google'
 import { Pirata_One } from "next/font/google"
 
@@ -98,7 +99,7 @@ export function Leaderboard() {
                   <TableCell>{index + 1}</TableCell>
                   <TableCell>
                     <div className="flex items-center gap-2">
-                      {player.name}
+                      <PlayerName playerId={player.id} name={player.name} />
                       {streak && (
                         <span className="relative group">
                           <span

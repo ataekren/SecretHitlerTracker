@@ -3,6 +3,7 @@
 import { usePlayers } from "@/lib/firebase-context"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { PlayerName } from "@/components/PlayerName"
 
 export function RoleStats() {
   const players = usePlayers()
@@ -48,7 +49,7 @@ export function RoleStats() {
             <TableBody>
               {getLiberalPlayers().map((player) => (
                 <TableRow key={`liberal-${player.id}`}>
-                  <TableCell>{player.name}</TableCell>
+                  <TableCell><PlayerName playerId={player.id} name={player.name} /></TableCell>
                   <TableCell>{player.liberalGames}</TableCell>
                   <TableCell>{player.liberalWins}</TableCell>
                   <TableCell>
@@ -82,7 +83,7 @@ export function RoleStats() {
             <TableBody>
               {getFascistPlayers().map((player) => (
                 <TableRow key={`fascist-${player.id}`}>
-                  <TableCell>{player.name}</TableCell>
+                  <TableCell><PlayerName playerId={player.id} name={player.name} /></TableCell>
                   <TableCell>{player.fascistGames}</TableCell>
                   <TableCell>{player.fascistWins}</TableCell>
                   <TableCell>
@@ -116,7 +117,7 @@ export function RoleStats() {
             <TableBody>
               {getHitlerPlayers().map((player) => (
                 <TableRow key={`hitler-${player.id}`}>
-                  <TableCell>{player.name}</TableCell>
+                  <TableCell><PlayerName playerId={player.id} name={player.name} /></TableCell>
                   <TableCell>{player.hitlerGames}</TableCell>
                   <TableCell>{player.hitlerWins}</TableCell>
                   <TableCell>
