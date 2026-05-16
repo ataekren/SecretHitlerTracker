@@ -188,32 +188,32 @@ export function PlayerProfile() {
           {/* Header */}
           <div className="space-y-3">
             <div className="flex items-center justify-between">
-            <div>
-              <div className="flex items-center gap-2">
-                <h2 className="text-2xl font-bold">{player.name}</h2>
-                {streak && (
-                  <span className="relative group">
-                    <span className={`inline-flex items-center gap-0.5 px-2 py-0.5 rounded-full text-xs font-bold cursor-default bg-gray-200 ${streak.type === "win" ? "bg-gray-200 text-orange-500" : "bg-gray-200 text-blue-500"}`}>
-                      {streak.type === "win" ? "🔥" : "❄️"}{streak.count}{"\u2009"}
+              <div>
+                <div className="flex items-center gap-2">
+                  <h2 className="text-2xl font-bold">{player.name}</h2>
+                  {streak && (
+                    <span className="relative group">
+                      <span className={`inline-flex items-center gap-0.5 px-2 py-0.5 rounded-full text-xs font-bold cursor-default bg-gray-200 ${streak.type === "win" ? "bg-gray-200 text-orange-500" : "bg-gray-200 text-blue-500"}`}>
+                        {streak.type === "win" ? "🔥" : "❄️"}{streak.count}{"\u2009"}
+                      </span>
+                      <span className="absolute top-full left-1/2 -translate-x-1/2 mt-2 px-3 py-1.5 bg-gray-200 text-foreground text-xs rounded-lg whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-50 shadow-md">
+                        <span className="font-bold">{player.name}</span> son {streak.count} maçını {streak.type === "win" ? "kazandı!" : "kaybetti!"}
+                      </span>
                     </span>
-                    <span className="absolute top-full left-1/2 -translate-x-1/2 mt-2 px-3 py-1.5 bg-gray-200 text-foreground text-xs rounded-lg whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-50 shadow-md">
-                      <span className="font-bold">{player.name}</span> son {streak.count} maçını {streak.type === "win" ? "kazandı!" : "kaybetti!"}
-                    </span>
-                  </span>
-                )}
+                  )}
+                </div>
+                <p className="text-muted-foreground text-sm mt-1">Sıralama: #{rank}</p>
               </div>
-              <p className="text-muted-foreground text-sm mt-1">Sıralama: #{rank}</p>
+              <div className="text-right">
+                <div className="text-3xl font-bold">{player.elo}</div>
+                <div className="text-xs text-muted-foreground">ELO</div>
+              </div>
             </div>
-            <div className="text-right">
-              <div className="text-3xl font-bold">{player.elo}</div>
-              <div className="text-xs text-muted-foreground">ELO</div>
-            </div>
+            <hr className="border-gray-200" />
           </div>
-          <hr className="border-gray-200" />
-        </div>
 
-        {/* Stats Grid */}
-        <div className="grid grid-cols-5 gap-2">
+          {/* Stats Grid */}
+          <div className="grid grid-cols-5 gap-2">
             {[
               { label: "Toplam", value: player.totalGames },
               { label: "Galibiyet", value: player.wins },
@@ -239,7 +239,7 @@ export function PlayerProfile() {
           {/* ELO Chart */}
           {eloHistory.length > 1 && (
             <div className="space-y-2">
-              <h3 className="text-sm font-semibold text-muted-foreground">ELO Geçmişi</h3>
+              <h3 className="text-sm font-semibold text-muted-foreground">Elo Geçmişi</h3>
               <div className="h-48 w-full">
                 <ResponsiveContainer width="100%" height="100%">
                   <LineChart data={eloHistory}>

@@ -21,9 +21,21 @@ export function AddPlayerForm() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (name.trim()) {
+      const trimmedName = name.trim()
+
+      // Check for uniqueness
+      if (players.some(p => p.name.toLowerCase() === trimmedName.toLowerCase())) {
+        toast({
+          title: "Hata",
+          description: "Bu isimde bir oyuncu zaten sistemde mevcut! Lütfen farklı bir isim girin.",
+          variant: "destructive",
+        })
+        return
+      }
+
       try {
         await addDoc(collection(db, "players"), {
-          name: name.trim(),
+          name: trimmedName,
           wins: 0,
           totalGames: 0,
           elo: 1000,
@@ -62,10 +74,23 @@ export function AddPlayerForm() {
   }
 
   const handleEditSubmit = async (playerId: string) => {
-    if (editName.trim() && editName.trim() !== players.find(p => p.id === playerId)?.name) {
+    const trimmedEditName = editName.trim()
+    const currentPlayer = players.find(p => p.id === playerId)
+
+    if (trimmedEditName && currentPlayer && trimmedEditName !== currentPlayer.name) {
+      // Check for uniqueness
+      if (players.some(p => p.id !== playerId && p.name.toLowerCase() === trimmedEditName.toLowerCase())) {
+        toast({
+          title: "Hata",
+          description: "Bu isimde bir oyuncu zaten sistemde mevcut! Lütfen farklı bir isim girin.",
+          variant: "destructive",
+        })
+        return
+      }
+
       try {
         await updateDoc(doc(db, "players", playerId), {
-          name: editName.trim(),
+          name: trimmedEditName,
         })
         setEditingPlayerId(null)
         setEditName("")

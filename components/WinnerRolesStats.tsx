@@ -51,7 +51,7 @@ export function WinnerRolesStats() {
     const { payload } = props
 
     return (
-      <div className="flex justify-center mt-4 space-x-6">
+      <div className="flex flex-wrap justify-center gap-x-6 gap-y-2">
         {payload.map((entry: any, index: number) => (
           <div key={`legend-${index}`} className="flex items-center">
             <div
@@ -75,8 +75,8 @@ export function WinnerRolesStats() {
           <img src="/stats.png" alt="Stats Logo" className="w-7 h-7 opacity-55" />
         </div>
       </CardHeader>
-      <CardContent>
-        <div className="h-64 w-full">
+      <CardContent className="pb-6">
+        <div className="h-[280px] w-full flex justify-center items-center">
           {winnerStats.length > 0 ? (
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
@@ -96,7 +96,7 @@ export function WinnerRolesStats() {
                   ))}
                 </Pie>
                 <Tooltip content={customTooltip} />
-                <Legend content={renderCustomLegend} />
+                <Legend content={renderCustomLegend} verticalAlign="bottom" align="center" wrapperStyle={{ paddingTop: "20px" }} />
               </PieChart>
             </ResponsiveContainer>
           ) : (
