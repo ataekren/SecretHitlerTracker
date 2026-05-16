@@ -17,7 +17,7 @@ export function Navbar() {
       <div className="container mx-auto px-4 py-3 flex justify-between items-center">
         <Link href="/" className="hover:opacity-80 transition-opacity flex items-center gap-2">
           <Image
-            src="/kim-logo.png"
+            src={process.env.NEXT_PUBLIC_BRANDING === "TR" ? "/sh.png" : "/kim-logo.png"}
             alt="Keep in Mind Logo"
             width={40}
             height={13}
