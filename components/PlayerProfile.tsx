@@ -5,7 +5,17 @@ import { usePlayerProfile } from "@/lib/player-profile-context"
 import { usePlayers, useMatches } from "@/lib/firebase-context"
 import { Card, CardContent } from "@/components/ui/card"
 import { X } from "lucide-react"
-import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts"
+import {
+  LineChart, Line,
+  XAxis,
+  YAxis,
+  Tooltip,
+  ResponsiveContainer,
+  CartesianGrid,
+  Area,
+  AreaChart,
+  ComposedChart
+} from "recharts"
 
 export function PlayerProfile() {
   const { selectedPlayerId, closeProfile } = usePlayerProfile()
@@ -239,28 +249,86 @@ export function PlayerProfile() {
           {/* ELO Chart */}
           {eloHistory.length > 1 && (
             <div className="space-y-2">
-              <h3 className="text-sm font-semibold text-muted-foreground">Elo Geçmişi</h3>
-              <div className="h-48 w-full">
+              <h3 className="text-sm font-semibold text-muted-foreground">
+                Elo Geçmişi
+              </h3>
+
+              <div className="h-52 w-full rounded-xl bg-gray-50 p-3">
                 <ResponsiveContainer width="100%" height="100%">
-                  <LineChart data={eloHistory}>
-                    <XAxis dataKey="match" tick={{ fontSize: 11 }} />
-                    <YAxis domain={["dataMin - 20", "dataMax + 20"]} tick={{ fontSize: 11 }} width={40} />
+                  <ComposedChart data={eloHistory}>
+                    <defs>
+                      <linearGradient id="eloGradient" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stopColor="#0051ffff" stopOpacity={0.55} />
+                        <stop offset="100%" stopColor="#0084ff88" stopOpacity={0.03} />
+                      </linearGradient>
+                    </defs>
+
+                    <CartesianGrid
+                      strokeDasharray="3 3"
+                      stroke="#cecece94"
+                      vertical={false}
+                    />
+
+                    <XAxis
+                      dataKey="match"
+                      axisLine={false}
+                      tickLine={false}
+                      tick={false}
+                    />
+
+                    <YAxis
+                      domain={["dataMin - 30", "dataMax + 30"]}
+                      axisLine={false}
+                      tickLine={false}
+                      tick={{ fill: "#888", fontSize: 11 }}
+                      width={42}
+                    />
+
                     <Tooltip
                       content={({ active, payload }: any) => {
                         if (active && payload?.[0]) {
                           return (
-                            <div className="bg-white border rounded-lg px-3 py-2 shadow-md text-sm">
+                            <div className="bg-gray-50 border border-gray-100 rounded-lg px-3 py-2 shadow-lg text-sm text-gray-800">
                               <div>Maç #{payload[0].payload.match}</div>
-                              <div className="font-bold">ELO: {payload[0].value}</div>
-                              {payload[0].payload.date && <div className="text-xs text-muted-foreground">{payload[0].payload.date}</div>}
+                              <div className="font-bold text-black-400">
+                                ELO: {payload[0].value}
+                              </div>
+                              {/* {payload[0].payload.date && (
+                                <div className="text-xs text-zinc-400">
+                                  {payload[0].payload.date}
+                                </div>
+                              )} */}
                             </div>
                           )
                         }
+
                         return null
                       }}
                     />
-                    <Line type="natural" dataKey="elo" stroke="#4891ffff" strokeWidth={1.5} dot={false} activeDot={{ r: 5, strokeWidth: 0 }} />
-                  </LineChart>
+
+                    {/* Fill */}
+                    <Area
+                      type="linear"
+                      dataKey="elo"
+                      stroke="none"
+                      fill="url(#eloGradient)"
+                    />
+
+                    {/* Main line */}
+                    <Line
+                      type="linear"
+                      dataKey="elo"
+                      stroke="#0059ff9a"
+                      strokeWidth={2}
+                      fill="none"
+                      dot={false}
+                      activeDot={{
+                        r: 4,
+                        fill: "#0059ffff",
+                        strokeWidth: 0,
+                      }}
+                    />
+                  </ComposedChart>
                 </ResponsiveContainer>
               </div>
             </div>
